@@ -5,6 +5,13 @@
     min-height: 100vh;
 }
 
+/* Sticky Wrapper */
+.sticky-wrapper {
+    position: sticky;
+    top: 80px;
+    z-index: 50;
+}
+
 /* Title Section */
 .title-section {
     text-align: center;
@@ -12,9 +19,6 @@
     margin-bottom: var(--spacing-md);
     background: linear-gradient(135deg, var(--surface-color) 0%, var(--background-color) 100%);
     border-radius: var(--radius-lg);
-    position: sticky;
-    top: 80px;
-    z-index: 50;
 }
 
 .title-section h1 {
@@ -26,6 +30,21 @@
 .population-total {
     font-size: 1.1rem;
     font-weight: 600;
+    color: var(--primary-light);
+}
+
+.data-source {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-sm);
+}
+
+.data-source a {
+    color: var(--text-secondary);
+    text-decoration: underline;
+}
+
+.data-source a:hover {
     color: var(--primary-light);
 }
 
@@ -78,9 +97,7 @@
     border-radius: var(--radius-lg);
     padding: var(--spacing-md);
     border: 1px solid var(--border-color);
-    position: sticky;
-    top: 160px;
-    height: calc(100vh - 180px);
+    height: calc(100vh - 280px);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -340,9 +357,7 @@
     }
     
     .timeline-container {
-        position: static;
-        height: 300px;
-        order: -1;
+        display: none;
     }
     
     /* Hide population numbers chart on mobile */
@@ -381,6 +396,6 @@
 
 /* Scroll spacer to enable page scrolling */
 .scroll-spacer {
-    height: 200vh;
+    height: 500vh;
     pointer-events: none;
 }
