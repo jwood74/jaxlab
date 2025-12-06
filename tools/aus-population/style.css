@@ -1,21 +1,23 @@
 /* Australian Population Viewer Styles */
 
 .population-viewer {
-    padding: var(--spacing-md) 0;
+    padding-top: 1px;
+    padding-bottom: var(--spacing-md);
     min-height: 100vh;
 }
 
 /* Sticky Wrapper */
 .sticky-wrapper {
     position: sticky;
-    top: 80px;
+    top: 90px;
     z-index: 50;
+    padding-top: var(--spacing-sm);
 }
 
 /* Title Section */
 .title-section {
     text-align: center;
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
     background: linear-gradient(135deg, var(--surface-color) 0%, var(--background-color) 100%);
     border-radius: var(--radius-lg);
@@ -36,7 +38,7 @@
 .data-source {
     font-size: 0.7rem;
     color: var(--text-secondary);
-    margin-top: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
 }
 
 .data-source a {
@@ -403,4 +405,18 @@
 /* Footer Override */
 .footer {
     padding: var(--spacing-md) 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+/* Hide scrollbar */
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+    display: none;
 }
