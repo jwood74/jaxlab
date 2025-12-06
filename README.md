@@ -2,7 +2,7 @@
 
 A collection of interactive tools, visualisations, and widgets designed to help you understand complex concepts in a fun and engaging way.
 
-**Live Site:** [labs.jaxen.au](https://labs.jaxen.au)
+**Live Site:** [lab.jaxen.au](https://lab.jaxen.au)
 
 ## About
 
@@ -59,7 +59,7 @@ Then open `http://localhost:8000` in your browser.
 
 ## Deployment
 
-This site is hosted on GitHub Pages and accessible at [labs.jaxen.au](https://labs.jaxen.au).
+This site is hosted on GitHub Pages and accessible at [lab.jaxen.au](https://lab.jaxen.au).
 
 ## License
 
