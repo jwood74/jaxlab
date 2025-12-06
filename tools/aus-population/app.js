@@ -29,6 +29,11 @@ const STATE_COLORS = {
 // Global data storage
 let populationData = [];
 let currentIndex = 0;
+let scrollTicking = false;
+
+// Constants for full population range (for fixed axis)
+let MIN_POPULATION = Infinity;
+let MAX_POPULATION = -Infinity;
 
 /**
  * Initialize the application
@@ -85,58 +90,125 @@ async function loadPopulationData() {
  * Initialize the application
  */
 function initializeApp() {
-    createTimeline();
+    // Calculate min/max for the entire dataset
+    populationData.forEach(data => {
+        MIN_POPULATION = Math.min(MIN_POPULATION, data.Aus);
+        MAX_POPULATION = Math.max(MAX_POPULATION, data.Aus);
+    });
     
-    // Set initial index to most recent data
-    currentIndex = populationData.length - 1;
+    createTimeline();
+    setupScrollListener();
+    
+    // Set initial index to earliest data
+    currentIndex = 0;
     
     updateVisualization(currentIndex);
-    updateTimeline(currentIndex);
+    updateTimelineIndicator();
 }
 
 /**
- * Create timeline elements
+ * Setup scroll listener for page scroll
+ */
+function setupScrollListener() {
+    window.addEventListener('scroll', () => {
+        if (!scrollTicking) {
+            window.requestAnimationFrame(() => {
+                updateFromScroll();
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    });
+}
+
+/**
+ * Update visualization based on scroll position
+ */
+function updateFromScroll() {
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPosition = window.scrollY;
+    
+    if (scrollHeight <= 0) return;
+    
+    // Map scroll position to data index
+    const scrollPercent = scrollPosition / scrollHeight;
+    const newIndex = Math.floor(scrollPercent * (populationData.length - 1));
+    
+    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < populationData.length) {
+        currentIndex = newIndex;
+        updateVisualization(currentIndex);
+        updateTimelineIndicator();
+    }
+}
+
+/**
+ * Create timeline elements - show key milestones only
  */
 function createTimeline() {
     const timeline = document.getElementById('timeline');
     
-    populationData.forEach((data, index) => {
+    // Clear existing content
+    timeline.innerHTML = '';
+    
+    // Create milestone indices: start, every 5 years, and end
+    const milestoneIndices = [];
+    
+    // Add start
+    milestoneIndices.push(0);
+    
+    // Add milestones every ~5 years (20 quarters)
+    for (let i = 20; i < populationData.length - 1; i += 20) {
+        milestoneIndices.push(i);
+    }
+    
+    // Add end
+    if (milestoneIndices[milestoneIndices.length - 1] !== populationData.length - 1) {
+        milestoneIndices.push(populationData.length - 1);
+    }
+    
+    // Create timeline items for milestones
+    milestoneIndices.forEach((index, i) => {
+        const data = populationData[index];
         const item = document.createElement('div');
         item.className = 'timeline-item';
-        item.innerHTML = `
-            <div class="timeline-item-date">${data.dateString}</div>
-            <div class="timeline-item-population">${formatNumber(data.Aus)} people</div>
-        `;
+        item.style.marginTop = i === 0 ? '0' : `${(index - milestoneIndices[i - 1]) * 2}px`;
+        item.innerHTML = `<div class="timeline-item-date">${data.dateString}</div>`;
         
         item.addEventListener('click', () => {
             currentIndex = index;
             updateVisualization(index);
-            updateTimeline(index);
+            updateTimelineIndicator();
+            // Scroll page to match timeline position
+            const scrollPercent = index / (populationData.length - 1);
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            window.scrollTo({ top: scrollPercent * scrollHeight, behavior: 'smooth' });
         });
         
         timeline.appendChild(item);
     });
     
-    // Scroll to bottom (most recent) initially
-    setTimeout(() => {
-        timeline.scrollTop = timeline.scrollHeight;
-    }, 100);
+    // Add current position indicator
+    const indicator = document.createElement('div');
+    indicator.className = 'timeline-current-indicator';
+    indicator.id = 'timeline-indicator';
+    timeline.appendChild(indicator);
 }
 
 /**
- * Update timeline active state
+ * Update timeline position indicator
  */
-function updateTimeline(index) {
-    const items = document.querySelectorAll('.timeline-item');
-    items.forEach((item, i) => {
-        if (i === index) {
-            item.classList.add('active');
-            // Scroll into view if needed
-            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else {
-            item.classList.remove('active');
-        }
-    });
+function updateTimelineIndicator() {
+    const indicator = document.getElementById('timeline-indicator');
+    const timeline = document.getElementById('timeline');
+    
+    if (!indicator || !timeline) return;
+    
+    // Calculate position as percentage of timeline height
+    const percent = currentIndex / (populationData.length - 1);
+    const timelineHeight = timeline.clientHeight;
+    const position = percent * timelineHeight;
+    
+    indicator.style.top = `${position}px`;
 }
 
 /**
@@ -188,7 +260,7 @@ function updateBarChart(data) {
 }
 
 /**
- * Update percentage chart
+ * Update percentage chart - vertical column chart
  */
 function updatePercentageChart(data) {
     const container = document.getElementById('percentage-chart');
@@ -196,17 +268,30 @@ function updatePercentageChart(data) {
     const states = Object.keys(STATE_NAMES);
     const total = data.Aus;
     
-    let html = '<div class="percentage-grid">';
+    // Calculate percentages
+    const stateData = states.map(state => ({
+        state,
+        population: data[state],
+        percentage: (data[state] / total) * 100
+    }));
     
-    states.forEach(state => {
-        const population = data[state];
-        const percentage = ((population / total) * 100).toFixed(1);
+    // Find max percentage for scaling
+    const maxPercentage = Math.max(...stateData.map(d => d.percentage));
+    
+    let html = '<div class="percentage-chart-container">';
+    
+    stateData.forEach(({ state, percentage }) => {
+        const height = (percentage / maxPercentage) * 100;
         
         html += `
-            <div class="percentage-item">
-                <div class="percentage-color" style="background-color: ${STATE_COLORS[state]};"></div>
-                <div class="percentage-label">${state}</div>
-                <div class="percentage-value">${percentage}%</div>
+            <div class="percentage-column">
+                <div class="percentage-bar" style="height: ${height * 1.5}px;">
+                    <div class="percentage-bar-fill" style="height: 100%; background-color: ${STATE_COLORS[state]};"></div>
+                </div>
+                <div class="percentage-label-container">
+                    <div class="percentage-state-label">${state}</div>
+                    <div class="percentage-value">${percentage.toFixed(1)}%</div>
+                </div>
             </div>
         `;
     });
@@ -217,6 +302,7 @@ function updatePercentageChart(data) {
 
 /**
  * Update line chart (total population over time)
+ * Fixed axis that doesn't change
  */
 function updateLineChart(currentIdx) {
     const container = document.getElementById('line-chart');
@@ -228,15 +314,14 @@ function updateLineChart(currentIdx) {
     
     // SVG dimensions
     const width = container.clientWidth || 600;
-    const height = 250;
-    const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+    const height = 200;
+    const padding = { top: 15, right: 15, bottom: 30, left: 50 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
     
-    // Get min and max values
-    const populations = dataToShow.map(d => d.Aus);
-    const minPop = Math.min(...populations);
-    const maxPop = Math.max(...populations);
+    // Use fixed min/max from entire dataset
+    const minPop = MIN_POPULATION;
+    const maxPop = MAX_POPULATION;
     const popRange = maxPop - minPop;
     
     // Create SVG
@@ -252,29 +337,23 @@ function updateLineChart(currentIdx) {
         </defs>
     `;
     
-    // Add grid lines
+    // Add grid lines (based on full range)
     for (let i = 0; i <= 4; i++) {
         const y = padding.top + (chartHeight / 4) * i;
         svg += `<line class="line-grid" x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" />`;
         
         const value = maxPop - (popRange / 4) * i;
-        svg += `<text class="line-label" x="${padding.left - 10}" y="${y + 4}" text-anchor="end">${formatNumberShort(value)}</text>`;
+        svg += `<text class="line-label" x="${padding.left - 5}" y="${y + 3}" text-anchor="end">${formatNumberShort(value)}</text>`;
     }
     
-    // Generate path data
+    // Generate path data (using full data length for x-axis)
     let pathData = '';
     let areaData = '';
     
     dataToShow.forEach((data, index) => {
-        // Handle single data point case
-        const x = dataToShow.length === 1 
-            ? padding.left + chartWidth / 2 
-            : padding.left + (chartWidth / (dataToShow.length - 1)) * index;
-        
-        // Handle case when all values are the same (popRange = 0)
-        const y = popRange === 0 
-            ? padding.top + chartHeight / 2 
-            : padding.top + chartHeight - ((data.Aus - minPop) / popRange) * chartHeight;
+        // Use full dataset length for x positioning
+        const x = padding.left + (chartWidth / (populationData.length - 1)) * index;
+        const y = padding.top + chartHeight - ((data.Aus - minPop) / popRange) * chartHeight;
         
         if (index === 0) {
             pathData += `M ${x} ${y}`;
@@ -286,30 +365,31 @@ function updateLineChart(currentIdx) {
         }
         
         // Add point
-        svg += `<circle cx="${x}" cy="${y}" r="3" fill="#6366f1" />`;
+        if (index === dataToShow.length - 1) {
+            svg += `<circle cx="${x}" cy="${y}" r="4" fill="#6366f1" />`;
+        }
     });
     
     // Close area path
-    const lastX = dataToShow.length === 1 
-        ? padding.left + chartWidth / 2 
-        : padding.left + (chartWidth / (dataToShow.length - 1)) * (dataToShow.length - 1);
+    const lastIdx = dataToShow.length - 1;
+    const lastX = padding.left + (chartWidth / (populationData.length - 1)) * lastIdx;
     areaData += ` L ${lastX} ${height - padding.bottom} Z`;
     
     // Add area and line
     svg += `<path class="line-area" d="${areaData}" />`;
     svg += `<path class="line-path" d="${pathData}" />`;
     
-    // Add x-axis labels
-    const labelIndices = [0, Math.floor(dataToShow.length / 2), dataToShow.length - 1];
-    labelIndices.forEach(index => {
-        if (index < dataToShow.length) {
-            const x = dataToShow.length === 1 
-                ? padding.left + chartWidth / 2 
-                : padding.left + (chartWidth / (dataToShow.length - 1)) * index;
-            const data = dataToShow[index];
-            const year = data.date.getFullYear();
-            svg += `<text class="line-label" x="${x}" y="${height - padding.bottom + 20}" text-anchor="middle">${year}</text>`;
-        }
+    // Add x-axis labels (based on full range)
+    const firstYear = populationData[0].date.getFullYear();
+    const lastYear = populationData[populationData.length - 1].date.getFullYear();
+    const midYear = Math.floor((firstYear + lastYear) / 2);
+    
+    [
+        { year: firstYear, x: padding.left },
+        { year: midYear, x: padding.left + chartWidth / 2 },
+        { year: lastYear, x: padding.left + chartWidth }
+    ].forEach(({ year, x }) => {
+        svg += `<text class="line-label" x="${x}" y="${height - padding.bottom + 15}" text-anchor="middle">${year}</text>`;
     });
     
     svg += '</svg>';
@@ -318,10 +398,11 @@ function updateLineChart(currentIdx) {
 }
 
 /**
- * Format date to readable string
+ * Format date to readable string (full month name)
  */
 function formatDate(date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
     const month = months[date.getMonth()];
     const year = date.getFullYear();
     return `${month} ${year}`;
