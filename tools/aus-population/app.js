@@ -35,6 +35,11 @@ let scrollTicking = false;
 let MIN_POPULATION = Infinity;
 let MAX_POPULATION = -Infinity;
 
+// Timeline configuration
+const QUARTERS_PER_MILESTONE = 20; // ~5 years
+const TIMELINE_SPACING_MULTIPLIER = 2;
+const COLUMN_HEIGHT_SCALE = 1.5;
+
 /**
  * Initialize the application
  */
@@ -156,8 +161,8 @@ function createTimeline() {
     // Add start
     milestoneIndices.push(0);
     
-    // Add milestones every ~5 years (20 quarters)
-    for (let i = 20; i < populationData.length - 1; i += 20) {
+    // Add milestones every ~5 years
+    for (let i = QUARTERS_PER_MILESTONE; i < populationData.length - 1; i += QUARTERS_PER_MILESTONE) {
         milestoneIndices.push(i);
     }
     
@@ -171,7 +176,7 @@ function createTimeline() {
         const data = populationData[index];
         const item = document.createElement('div');
         item.className = 'timeline-item';
-        item.style.marginTop = i === 0 ? '0' : `${(index - milestoneIndices[i - 1]) * 2}px`;
+        item.style.marginTop = i === 0 ? '0' : `${(index - milestoneIndices[i - 1]) * TIMELINE_SPACING_MULTIPLIER}px`;
         item.innerHTML = `<div class="timeline-item-date">${data.dateString}</div>`;
         
         item.addEventListener('click', () => {
@@ -285,7 +290,7 @@ function updatePercentageChart(data) {
         
         html += `
             <div class="percentage-column">
-                <div class="percentage-bar" style="height: ${height * 1.5}px;">
+                <div class="percentage-bar" style="height: ${height * COLUMN_HEIGHT_SCALE}px;">
                     <div class="percentage-bar-fill" style="height: 100%; background-color: ${STATE_COLORS[state]};"></div>
                 </div>
                 <div class="percentage-label-container">
