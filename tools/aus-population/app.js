@@ -176,7 +176,15 @@ function createTimeline() {
         const data = populationData[index];
         const item = document.createElement('div');
         item.className = 'timeline-item';
-        item.style.marginTop = i === 0 ? '0' : `${(index - milestoneIndices[i - 1]) * TIMELINE_SPACING_MULTIPLIER}px`;
+        
+        // Position absolutely based on percentage of total duration
+        const percent = (index / (populationData.length - 1)) * 100;
+        item.style.position = 'absolute';
+        item.style.top = `${percent}%`;
+        item.style.width = '100%';
+        item.style.margin = '0';
+        item.style.transform = 'translateY(-50%)';
+        
         item.innerHTML = `<div class="timeline-item-date">${data.dateString}</div>`;
         
         item.addEventListener('click', () => {
