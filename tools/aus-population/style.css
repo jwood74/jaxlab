@@ -1,26 +1,30 @@
 /* Australian Population Viewer Styles */
 
 .population-viewer {
-    padding: var(--spacing-xl) 0;
+    padding: var(--spacing-md) 0;
+    min-height: 100vh;
 }
 
 /* Title Section */
 .title-section {
     text-align: center;
-    padding: var(--spacing-xl) var(--spacing-md);
-    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
     background: linear-gradient(135deg, var(--surface-color) 0%, var(--background-color) 100%);
     border-radius: var(--radius-lg);
+    position: sticky;
+    top: 80px;
+    z-index: 50;
 }
 
 .title-section h1 {
-    font-size: 2rem;
-    margin-bottom: var(--spacing-sm);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-xs);
     color: var(--text-primary);
 }
 
 .population-total {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--primary-light);
 }
@@ -28,8 +32,8 @@
 /* Content Container */
 .content-container {
     display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: var(--spacing-xl);
+    grid-template-columns: 1fr 180px;
+    gap: var(--spacing-md);
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
@@ -37,137 +41,170 @@
 
 /* Visualizations */
 .visualizations {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
 }
 
 .chart-container {
     background-color: var(--surface-color);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
+    padding: var(--spacing-md);
     border: 1px solid var(--border-color);
 }
 
 .chart-container h2 {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
     color: var(--text-primary);
-    font-size: 1.5rem;
+    font-size: 1.1rem;
 }
 
 .chart {
-    min-height: 300px;
+    min-height: 200px;
     position: relative;
 }
 
+.line-chart-container {
+    grid-column: 1 / -1;
+}
+
 .line-chart-container .chart {
-    min-height: 250px;
+    min-height: 180px;
 }
 
 /* Timeline Container */
 .timeline-container {
     background-color: var(--surface-color);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     border: 1px solid var(--border-color);
     position: sticky;
-    top: 100px;
-    max-height: calc(100vh - 150px);
+    top: 160px;
+    height: calc(100vh - 180px);
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
 .timeline-container h3 {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     color: var(--text-primary);
     text-align: center;
+    font-size: 0.95rem;
 }
 
 .timeline {
     flex: 1;
-    overflow-y: auto;
-    padding-right: var(--spacing-sm);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-md) var(--spacing-xs);
 }
 
-.timeline::-webkit-scrollbar {
-    width: 8px;
-}
-
-.timeline::-webkit-scrollbar-track {
-    background: var(--background-color);
-    border-radius: var(--radius-sm);
-}
-
-.timeline::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: var(--radius-sm);
-}
-
-.timeline::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark);
+/* Timeline Visual Line */
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
 }
 
 /* Timeline Items */
 .timeline-item {
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    padding-left: 40px;
     margin-bottom: var(--spacing-sm);
-    border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--transition-fast);
-    border-left: 3px solid transparent;
-    background-color: var(--background-color);
+    position: relative;
+    font-size: 0.8rem;
 }
 
-.timeline-item:hover {
-    background-color: var(--surface-hover);
-    border-left-color: var(--primary-light);
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-color);
+    transition: all var(--transition-fast);
 }
 
-.timeline-item.active {
-    background-color: var(--primary-color);
-    border-left-color: var(--secondary-color);
+.timeline-item:hover::before {
+    background: var(--primary-light);
+    width: 10px;
+    height: 10px;
 }
 
 .timeline-item-date {
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-primary);
-    font-size: 0.95rem;
 }
 
-.timeline-item-population {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: var(--spacing-xs);
+/* Current position indicator */
+.timeline-current-indicator {
+    position: absolute;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    margin-left: -8px;
+    transition: top 0.3s ease;
+    z-index: 10;
 }
 
-.timeline-item.active .timeline-item-population {
-    color: var(--text-primary);
+.timeline-current-indicator::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 2px solid var(--surface-color);
+    box-shadow: 0 0 0 2px var(--primary-color);
+    animation: pulse-ring 2s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        box-shadow: 0 0 0 2px var(--primary-color);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 2px var(--primary-color);
+    }
 }
 
 /* Bar Chart */
 .bar-chart {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
 }
 
 .bar-item {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
 }
 
 .bar-label {
-    min-width: 50px;
+    min-width: 40px;
     font-weight: 500;
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.75rem;
 }
 
 .bar-container {
     flex: 1;
-    height: 30px;
+    height: 22px;
     background-color: var(--background-color);
     border-radius: var(--radius-sm);
     position: relative;
@@ -182,48 +219,69 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding-right: var(--spacing-sm);
+    padding-right: var(--spacing-xs);
 }
 
 .bar-value {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
 }
 
-/* Percentage Chart (Donut) */
-.percentage-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-md);
-}
-
-.percentage-item {
+/* Percentage Chart - Vertical Column Chart */
+.percentage-chart-container {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm);
-    background-color: var(--background-color);
-    border-radius: var(--radius-sm);
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 100%;
+    gap: var(--spacing-xs);
+    padding-top: var(--spacing-md);
 }
 
-.percentage-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-}
-
-.percentage-label {
+.percentage-column {
     flex: 1;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.percentage-bar {
+    width: 100%;
+    max-width: 60px;
+    background: var(--background-color);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    position: relative;
+    transition: height 0.5s ease;
+    min-height: 10px;
+}
+
+.percentage-bar-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: height 0.5s ease;
+}
+
+.percentage-label-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.percentage-state-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .percentage-value {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 0.9rem;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
 }
 
 /* Line Chart */
@@ -277,10 +335,14 @@
         grid-template-columns: 1fr;
     }
     
+    .visualizations {
+        grid-template-columns: 1fr;
+    }
+    
     .timeline-container {
         position: static;
-        max-height: 400px;
-        order: -1; /* Move timeline to top on mobile */
+        height: 300px;
+        order: -1;
     }
     
     /* Hide population numbers chart on mobile */
@@ -291,32 +353,34 @@
 
 @media (max-width: 768px) {
     .title-section h1 {
-        font-size: 1.5rem;
-    }
-    
-    .population-total {
         font-size: 1.2rem;
     }
     
+    .population-total {
+        font-size: 0.95rem;
+    }
+    
     .chart-container {
-        padding: var(--spacing-md);
+        padding: var(--spacing-sm);
     }
     
     .chart-container h2 {
-        font-size: 1.25rem;
-    }
-    
-    .percentage-grid {
-        grid-template-columns: 1fr;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .title-section h1 {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
     
     .population-total {
-        font-size: 1rem;
+        font-size: 0.85rem;
     }
+}
+
+/* Scroll spacer to enable page scrolling */
+.scroll-spacer {
+    height: 200vh;
+    pointer-events: none;
 }
