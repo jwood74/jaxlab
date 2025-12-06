@@ -175,7 +175,7 @@
         box-shadow: 0 0 0 2px var(--primary-color);
     }
     50% {
-        box-shadow: 0 0 0 6px rgba(99, 102, 241, 0);
+        box-shadow: 0 0 0 6px transparent;
     }
     100% {
         box-shadow: 0 0 0 2px var(--primary-color);
