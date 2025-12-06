@@ -48,6 +48,11 @@ document.addEventListener('DOMContentLoaded', async function() {
  */
 async function loadPopulationData() {
     const response = await fetch('../../data/australia_population_20250918.csv');
+    
+    if (!response.ok) {
+        throw new Error(`Failed to load CSV: ${response.status} ${response.statusText}`);
+    }
+    
     const csvText = await response.text();
     
     const lines = csvText.trim().split('\n');
@@ -61,15 +66,15 @@ async function loadPopulationData() {
         const dataPoint = {
             date: new Date(date),
             dateString: formatDate(new Date(date)),
-            NSW: parseInt(values[1]),
-            Vic: parseInt(values[2]),
-            Qld: parseInt(values[3]),
-            SA: parseInt(values[4]),
-            WA: parseInt(values[5]),
-            Tas: parseInt(values[6]),
-            NT: parseInt(values[7]),
-            ACT: parseInt(values[8]),
-            Aus: parseInt(values[9])
+            NSW: parseInt(values[1], 10),
+            Vic: parseInt(values[2], 10),
+            Qld: parseInt(values[3], 10),
+            SA: parseInt(values[4], 10),
+            WA: parseInt(values[5], 10),
+            Tas: parseInt(values[6], 10),
+            NT: parseInt(values[7], 10),
+            ACT: parseInt(values[8], 10),
+            Aus: parseInt(values[9], 10)
         };
         
         populationData.push(dataPoint);
