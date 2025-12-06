@@ -399,3 +399,8 @@
     height: 500vh;
     pointer-events: none;
 }
+
+/* Footer Override */
+.footer {
+    padding: var(--spacing-md) 0;
+}
