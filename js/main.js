@@ -1,5 +1,5 @@
 /**
- * JaxLabs - Main JavaScript
+ * JaxLab - Main JavaScript
  * Handles interactive functionality for the site
  */
 

@@ -1,4 +1,4 @@
-# JaxLabs 🧪
+# JaxLab 🧪
 
 A collection of interactive tools, visualisations, and widgets designed to help you understand complex concepts in a fun and engaging way.
 
@@ -6,7 +6,7 @@ A collection of interactive tools, visualisations, and widgets designed to help 
 
 ## About
 
-JaxLabs is inspired by sites like Neal.Fun, offering a curated collection of interactive tools and visualisations. Each tool is designed to make learning and exploring complex topics enjoyable and accessible.
+JaxLab is inspired by sites like Neal.Fun, offering a curated collection of interactive tools and visualisations. Each tool is designed to make learning and exploring complex topics enjoyable and accessible.
 
 ## Project Structure
 
