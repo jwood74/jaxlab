@@ -39,6 +39,7 @@ let MAX_POPULATION = -Infinity;
 const QUARTERS_PER_MILESTONE = 20; // ~5 years
 const TIMELINE_SPACING_MULTIPLIER = 2;
 const COLUMN_HEIGHT_SCALE = 1.5;
+const SMALL_BAR_THRESHOLD = 0.15; // Threshold for showing external labels (15% of max population)
 
 /**
  * Initialize the application
@@ -250,8 +251,8 @@ function updateBarChart(data) {
     const states = Object.keys(STATE_NAMES);
     const maxPopulation = Math.max(...states.map(state => data[state]));
     
-    // Define threshold for small bars (e.g., 15% of max)
-    const smallBarThreshold = maxPopulation * 0.15;
+    // Define threshold for small bars
+    const smallBarThreshold = maxPopulation * SMALL_BAR_THRESHOLD;
     
     let html = '<div class="bar-chart">';
     
@@ -354,7 +355,7 @@ function updatePercentageChart(data) {
 }
 
 /**
- * Update line chart - stacked area chart showing each state
+ * Update stacked area chart (total population over time by state)
  * Fixed axis that doesn't change, starting at 0
  */
 function updateLineChart(currentIdx) {
@@ -382,17 +383,17 @@ function updateLineChart(currentIdx) {
     // Create SVG
     let svg = `<svg class="line-chart-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}">`;
     
-    // Add gradients for each state
+    // Add gradients for each state in a single defs block
+    svg += '<defs>';
     states.forEach(state => {
         svg += `
-            <defs>
-                <linearGradient id="gradient-${state}" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:${STATE_COLORS[state]};stop-opacity:0.8" />
-                    <stop offset="100%" style="stop-color:${STATE_COLORS[state]};stop-opacity:0.5" />
-                </linearGradient>
-            </defs>
+            <linearGradient id="gradient-${state}" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:${STATE_COLORS[state]};stop-opacity:0.8" />
+                <stop offset="100%" style="stop-color:${STATE_COLORS[state]};stop-opacity:0.5" />
+            </linearGradient>
         `;
     });
+    svg += '</defs>';
     
     // Add grid lines (based on full range starting at 0)
     for (let i = 0; i <= 4; i++) {
