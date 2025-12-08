@@ -249,11 +249,13 @@
 }
 
 .bar-value-external {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-secondary);
     white-space: nowrap;
-    margin-left: var(--spacing-xs);
 }
 
 /* Percentage Chart - Vertical Column Chart */
