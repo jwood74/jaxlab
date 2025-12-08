@@ -3,6 +3,9 @@
  * Interactive game to explore the famous probability puzzle
  */
 
+// Constants
+const DOOR_REVEAL_DELAY_MS = 300; // Delay between sequential door reveals
+
 // Game state
 let gameState = {
     numDoors: 3,
@@ -33,10 +36,14 @@ const sounds = {
  */
 function createSoundEffects() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioContext = new AudioContext();
+    if (!AudioContext) return; // Browser doesn't support Web Audio API
+    
+    let audioContext = null;
     
     // Create ka-ching sound (win)
     sounds.win = function() {
+        if (!audioContext) audioContext = new AudioContext();
+        
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
         
@@ -47,12 +54,13 @@ function createSoundEffects() {
         oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
         
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
         
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.3);
         
         // Second ching
+        const SECOND_CHING_DELAY = 100;
         setTimeout(() => {
             const osc2 = audioContext.createOscillator();
             const gain2 = audioContext.createGain();
@@ -64,15 +72,17 @@ function createSoundEffects() {
             osc2.frequency.exponentialRampToValueAtTime(1400, audioContext.currentTime + 0.1);
             
             gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            gain2.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
             
             osc2.start(audioContext.currentTime);
             osc2.stop(audioContext.currentTime + 0.3);
-        }, 100);
+        }, SECOND_CHING_DELAY);
     };
     
     // Create goat bleat sound (lose)
     sounds.lose = function() {
+        if (!audioContext) audioContext = new AudioContext();
+        
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
         
@@ -84,7 +94,7 @@ function createSoundEffects() {
         oscillator.frequency.linearRampToValueAtTime(180, audioContext.currentTime + 0.4);
         
         gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.4);
         
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.4);
@@ -285,7 +295,7 @@ async function revealDoorsSequentially() {
         renderDoors();
         
         // Wait before revealing next door
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, DOOR_REVEAL_DELAY_MS));
     }
     
     // Show action buttons after all doors are revealed
