@@ -412,7 +412,6 @@ function updateLineChart(currentIdx) {
     
     states.forEach((state, stateIdx) => {
         let pathData = '';
-        let bottomPathData = '';
         
         dataToShow.forEach((data, index) => {
             const x = padding.left + (chartWidth / (populationData.length - 1)) * index;
@@ -434,7 +433,6 @@ function updateLineChart(currentIdx) {
             
             if (index === 0) {
                 pathData += `M ${x} ${y}`;
-                bottomPathData = `L ${x} ${yBottom}`;
             } else {
                 pathData += ` L ${x} ${y}`;
             }
