@@ -358,7 +358,8 @@ function updatePercentageChart(data) {
 
 /**
  * Update stacked area chart (total population over time by state)
- * Fixed axis that doesn't change, starting at 0
+ * Shows all states stacked on top of each other with each state in its own color.
+ * Axis is fixed and starts at 0, data reveals progressively as user scrolls.
  */
 function updateLineChart(currentIdx) {
     const container = document.getElementById('line-chart');
