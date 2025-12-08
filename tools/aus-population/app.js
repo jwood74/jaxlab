@@ -39,7 +39,7 @@ let MAX_POPULATION = -Infinity;
 const QUARTERS_PER_MILESTONE = 20; // ~5 years
 const TIMELINE_SPACING_MULTIPLIER = 2;
 const COLUMN_HEIGHT_SCALE = 1.5;
-const SMALL_BAR_THRESHOLD = 0.15; // Threshold for showing external labels (15% of max population)
+const EXTERNAL_LABEL_THRESHOLD = 0.15; // Show external labels for bars less than 15% of max population
 
 /**
  * Initialize the application
@@ -252,7 +252,7 @@ function updateBarChart(data) {
     const maxPopulation = Math.max(...states.map(state => data[state]));
     
     // Define threshold for small bars
-    const smallBarThreshold = maxPopulation * SMALL_BAR_THRESHOLD;
+    const smallBarThreshold = maxPopulation * EXTERNAL_LABEL_THRESHOLD;
     
     let html = '<div class="bar-chart">';
     
@@ -310,7 +310,9 @@ function updatePercentageChart(data) {
             const firstData = populationData[0];
             const firstPop = firstData[state];
             const currentPop = data[state];
-            growth = ((currentPop - firstPop) / firstPop) * 100;
+            if (firstPop > 0) {
+                growth = ((currentPop - firstPop) / firstPop) * 100;
+            }
         }
         
         return {
@@ -405,7 +407,7 @@ function updateLineChart(currentIdx) {
     }
     
     // Generate stacked area data
-    // We'll build from bottom to top: NSW, Vic, Qld, SA, WA, Tas, NT, ACT
+    // States are stacked in the order they appear in STATE_NAMES object
     const stackedPaths = [];
     
     states.forEach((state, stateIdx) => {
