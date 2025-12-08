@@ -15,6 +15,8 @@ let gameState = {
     phase: 'SELECT', // SELECT, SWITCH_OR_STAY, REVEAL
     stayWins: 0,
     switchWins: 0,
+    stayGames: 0,
+    switchGames: 0,
     totalGames: 0,
     showProbabilities: false
 };
@@ -124,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('simulate-switch').addEventListener('click', () => simulateGames('switch', 50));
     doorCountInput.addEventListener('change', function() {
         const newCount = parseInt(this.value);
-        if (newCount >= 3 && newCount <= 10) {
+        if (newCount >= 3 && newCount <= 16) {
             gameState.numDoors = newCount;
             resetGame();
         }
@@ -352,8 +354,10 @@ function makeDecision(decision) {
     // Update statistics
     gameState.totalGames++;
     if (decision === 'stay') {
+        gameState.stayGames++;
         if (won) gameState.stayWins++;
     } else {
+        gameState.switchGames++;
         if (won) gameState.switchWins++;
     }
     
@@ -401,12 +405,11 @@ function updateStatistics() {
     document.getElementById('switch-wins').textContent = gameState.switchWins;
     document.getElementById('total-games').textContent = gameState.totalGames;
     
-    if (gameState.totalGames > 0) {
-        const stayPercentage = (gameState.stayWins / gameState.totalGames * 100).toFixed(1);
-        const switchPercentage = (gameState.switchWins / gameState.totalGames * 100).toFixed(1);
-        document.getElementById('stay-percentage').textContent = `${stayPercentage}%`;
-        document.getElementById('switch-percentage').textContent = `${switchPercentage}%`;
-    }
+    const stayPercentage = gameState.stayGames > 0 ? (gameState.stayWins / gameState.stayGames * 100).toFixed(1) : '0.0';
+    const switchPercentage = gameState.switchGames > 0 ? (gameState.switchWins / gameState.switchGames * 100).toFixed(1) : '0.0';
+    
+    document.getElementById('stay-percentage').textContent = `${stayPercentage}%`;
+    document.getElementById('switch-percentage').textContent = `${switchPercentage}%`;
 }
 
 /**
@@ -415,6 +418,8 @@ function updateStatistics() {
 function saveStatistics() {
     localStorage.setItem('montyHall_stayWins', gameState.stayWins);
     localStorage.setItem('montyHall_switchWins', gameState.switchWins);
+    localStorage.setItem('montyHall_stayGames', gameState.stayGames);
+    localStorage.setItem('montyHall_switchGames', gameState.switchGames);
     localStorage.setItem('montyHall_totalGames', gameState.totalGames);
 }
 
@@ -424,6 +429,8 @@ function saveStatistics() {
 function loadStatistics() {
     gameState.stayWins = parseInt(localStorage.getItem('montyHall_stayWins') || '0');
     gameState.switchWins = parseInt(localStorage.getItem('montyHall_switchWins') || '0');
+    gameState.stayGames = parseInt(localStorage.getItem('montyHall_stayGames') || '0');
+    gameState.switchGames = parseInt(localStorage.getItem('montyHall_switchGames') || '0');
     gameState.totalGames = parseInt(localStorage.getItem('montyHall_totalGames') || '0');
     updateStatistics();
 }
@@ -435,6 +442,8 @@ function resetStatistics() {
     if (confirm('Are you sure you want to reset all cumulative results?')) {
         gameState.stayWins = 0;
         gameState.switchWins = 0;
+        gameState.stayGames = 0;
+        gameState.switchGames = 0;
         gameState.totalGames = 0;
         saveStatistics();
         updateStatistics();
@@ -498,8 +507,10 @@ async function simulateGames(strategy, count) {
         // Update statistics
         gameState.totalGames++;
         if (strategy === 'stay') {
+            gameState.stayGames++;
             if (won) gameState.stayWins++;
         } else {
+            gameState.switchGames++;
             if (won) gameState.switchWins++;
         }
         
