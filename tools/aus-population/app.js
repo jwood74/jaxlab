@@ -262,14 +262,14 @@ function updateBarChart(data) {
         const isSmallBar = population < smallBarThreshold;
         
         if (isSmallBar) {
-            // For small bars, show number on the right
+            // For small bars, show number on the right of the fill, inside container
             html += `
                 <div class="bar-item">
                     <div class="bar-label">${state}</div>
                     <div class="bar-container">
                         <div class="bar-fill" style="width: ${percentage}%; background: ${STATE_COLORS[state]};"></div>
+                        <span class="bar-value-external" style="left: calc(${percentage}% + 6px);">${formatNumber(population)}</span>
                     </div>
-                    <span class="bar-value-external">${formatNumber(population)}</span>
                 </div>
             `;
         } else {
@@ -305,13 +305,13 @@ function updatePercentageChart(data) {
         const percentage = (data[state] / total) * 100;
         let growth = null;
         
-        // Calculate growth from first data point
+        // Calculate growth from previous quarter
         if (currentIndex > 0) {
-            const firstData = populationData[0];
-            const firstPop = firstData[state];
+            const prevData = populationData[currentIndex - 1];
+            const prevPop = prevData[state];
             const currentPop = data[state];
-            if (firstPop > 0) {
-                growth = ((currentPop - firstPop) / firstPop) * 100;
+            if (prevPop > 0) {
+                growth = ((currentPop - prevPop) / prevPop) * 100;
             }
         }
         
