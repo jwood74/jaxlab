@@ -248,6 +248,14 @@
     white-space: nowrap;
 }
 
+.bar-value-external {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    margin-left: var(--spacing-xs);
+}
+
 /* Percentage Chart - Vertical Column Chart */
 .percentage-chart-container {
     display: flex;
@@ -303,6 +311,12 @@
     color: var(--text-secondary);
 }
 
+.percentage-growth {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
 /* Line Chart */
 .line-chart-svg {
     width: 100%;
@@ -320,6 +334,10 @@
 .line-area {
     fill: url(#gradient);
     opacity: 0.3;
+}
+
+.stacked-area {
+    stroke: none;
 }
 
 .line-grid {

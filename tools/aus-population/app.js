@@ -250,22 +250,40 @@ function updateBarChart(data) {
     const states = Object.keys(STATE_NAMES);
     const maxPopulation = Math.max(...states.map(state => data[state]));
     
+    // Define threshold for small bars (e.g., 15% of max)
+    const smallBarThreshold = maxPopulation * 0.15;
+    
     let html = '<div class="bar-chart">';
     
     states.forEach(state => {
         const population = data[state];
         const percentage = (population / maxPopulation) * 100;
+        const isSmallBar = population < smallBarThreshold;
         
-        html += `
-            <div class="bar-item">
-                <div class="bar-label">${state}</div>
-                <div class="bar-container">
-                    <div class="bar-fill" style="width: ${percentage}%; background: ${STATE_COLORS[state]};">
-                        <span class="bar-value">${formatNumber(population)}</span>
+        if (isSmallBar) {
+            // For small bars, show number on the right
+            html += `
+                <div class="bar-item">
+                    <div class="bar-label">${state}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${percentage}%; background: ${STATE_COLORS[state]};"></div>
+                    </div>
+                    <span class="bar-value-external">${formatNumber(population)}</span>
+                </div>
+            `;
+        } else {
+            // For large bars, show number inside
+            html += `
+                <div class="bar-item">
+                    <div class="bar-label">${state}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${percentage}%; background: ${STATE_COLORS[state]};">
+                            <span class="bar-value">${formatNumber(population)}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     });
     
     html += '</div>';
@@ -281,20 +299,41 @@ function updatePercentageChart(data) {
     const states = Object.keys(STATE_NAMES);
     const total = data.Aus;
     
-    // Calculate percentages
-    const stateData = states.map(state => ({
-        state,
-        population: data[state],
-        percentage: (data[state] / total) * 100
-    }));
+    // Calculate percentages and growth
+    const stateData = states.map(state => {
+        const percentage = (data[state] / total) * 100;
+        let growth = null;
+        
+        // Calculate growth from first data point
+        if (currentIndex > 0) {
+            const firstData = populationData[0];
+            const firstPop = firstData[state];
+            const currentPop = data[state];
+            growth = ((currentPop - firstPop) / firstPop) * 100;
+        }
+        
+        return {
+            state,
+            population: data[state],
+            percentage,
+            growth
+        };
+    });
     
     // Find max percentage for scaling
     const maxPercentage = Math.max(...stateData.map(d => d.percentage));
     
     let html = '<div class="percentage-chart-container">';
     
-    stateData.forEach(({ state, percentage }) => {
+    stateData.forEach(({ state, percentage, growth }) => {
         const height = (percentage / maxPercentage) * 100;
+        
+        // Format growth string
+        let growthStr = '';
+        if (growth !== null) {
+            const sign = growth >= 0 ? '+' : '';
+            growthStr = `<div class="percentage-growth">${sign}${growth.toFixed(1)}%</div>`;
+        }
         
         html += `
             <div class="percentage-column">
@@ -304,6 +343,7 @@ function updatePercentageChart(data) {
                 <div class="percentage-label-container">
                     <div class="percentage-state-label">${state}</div>
                     <div class="percentage-value">${percentage.toFixed(1)}%</div>
+                    ${growthStr}
                 </div>
             </div>
         `;
@@ -314,8 +354,8 @@ function updatePercentageChart(data) {
 }
 
 /**
- * Update line chart (total population over time)
- * Fixed axis that doesn't change
+ * Update line chart - stacked area chart showing each state
+ * Fixed axis that doesn't change, starting at 0
  */
 function updateLineChart(currentIdx) {
     const container = document.getElementById('line-chart');
@@ -332,25 +372,29 @@ function updateLineChart(currentIdx) {
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
     
-    // Use fixed min/max from entire dataset
-    const minPop = MIN_POPULATION;
+    // Use 0 as minimum, MAX_POPULATION as maximum
+    const minPop = 0;
     const maxPop = MAX_POPULATION;
     const popRange = maxPop - minPop;
+    
+    const states = Object.keys(STATE_NAMES);
     
     // Create SVG
     let svg = `<svg class="line-chart-svg" width="100%" height="${height}" viewBox="0 0 ${width} ${height}">`;
     
-    // Add gradient
-    svg += `
-        <defs>
-            <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.6" />
-                <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0" />
-            </linearGradient>
-        </defs>
-    `;
+    // Add gradients for each state
+    states.forEach(state => {
+        svg += `
+            <defs>
+                <linearGradient id="gradient-${state}" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:${STATE_COLORS[state]};stop-opacity:0.8" />
+                    <stop offset="100%" style="stop-color:${STATE_COLORS[state]};stop-opacity:0.5" />
+                </linearGradient>
+            </defs>
+        `;
+    });
     
-    // Add grid lines (based on full range)
+    // Add grid lines (based on full range starting at 0)
     for (let i = 0; i <= 4; i++) {
         const y = padding.top + (chartHeight / 4) * i;
         svg += `<line class="line-grid" x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" />`;
@@ -359,38 +403,69 @@ function updateLineChart(currentIdx) {
         svg += `<text class="line-label" x="${padding.left - 5}" y="${y + 3}" text-anchor="end">${formatNumberShort(value)}</text>`;
     }
     
-    // Generate path data (using full data length for x-axis)
-    let pathData = '';
-    let areaData = '';
+    // Generate stacked area data
+    // We'll build from bottom to top: NSW, Vic, Qld, SA, WA, Tas, NT, ACT
+    const stackedPaths = [];
     
-    dataToShow.forEach((data, index) => {
-        // Use full dataset length for x positioning
-        const x = padding.left + (chartWidth / (populationData.length - 1)) * index;
-        const y = padding.top + chartHeight - ((data.Aus - minPop) / popRange) * chartHeight;
+    states.forEach((state, stateIdx) => {
+        let pathData = '';
+        let bottomPathData = '';
         
-        if (index === 0) {
-            pathData += `M ${x} ${y}`;
-            areaData += `M ${x} ${height - padding.bottom}`;
-            areaData += ` L ${x} ${y}`;
-        } else {
-            pathData += ` L ${x} ${y}`;
-            areaData += ` L ${x} ${y}`;
+        dataToShow.forEach((data, index) => {
+            const x = padding.left + (chartWidth / (populationData.length - 1)) * index;
+            
+            // Calculate cumulative population up to this state
+            let cumulativePop = 0;
+            for (let i = 0; i <= stateIdx; i++) {
+                cumulativePop += data[states[i]];
+            }
+            
+            // Calculate cumulative population up to previous state (for bottom of area)
+            let cumulativePrevPop = 0;
+            for (let i = 0; i < stateIdx; i++) {
+                cumulativePrevPop += data[states[i]];
+            }
+            
+            const y = padding.top + chartHeight - ((cumulativePop - minPop) / popRange) * chartHeight;
+            const yBottom = padding.top + chartHeight - ((cumulativePrevPop - minPop) / popRange) * chartHeight;
+            
+            if (index === 0) {
+                pathData += `M ${x} ${y}`;
+                bottomPathData = `L ${x} ${yBottom}`;
+            } else {
+                pathData += ` L ${x} ${y}`;
+            }
+        });
+        
+        // Create closed path for area by going back along bottom
+        let areaPath = pathData;
+        
+        // Add bottom path in reverse
+        for (let index = dataToShow.length - 1; index >= 0; index--) {
+            const x = padding.left + (chartWidth / (populationData.length - 1)) * index;
+            
+            let cumulativePrevPop = 0;
+            for (let i = 0; i < stateIdx; i++) {
+                cumulativePrevPop += dataToShow[index][states[i]];
+            }
+            
+            const yBottom = padding.top + chartHeight - ((cumulativePrevPop - minPop) / popRange) * chartHeight;
+            areaPath += ` L ${x} ${yBottom}`;
         }
         
-        // Add point
-        if (index === dataToShow.length - 1) {
-            svg += `<circle cx="${x}" cy="${y}" r="4" fill="#6366f1" />`;
-        }
+        areaPath += ' Z';
+        
+        stackedPaths.push({
+            state,
+            path: areaPath,
+            color: STATE_COLORS[state]
+        });
     });
     
-    // Close area path
-    const lastIdx = dataToShow.length - 1;
-    const lastX = padding.left + (chartWidth / (populationData.length - 1)) * lastIdx;
-    areaData += ` L ${lastX} ${height - padding.bottom} Z`;
-    
-    // Add area and line
-    svg += `<path class="line-area" d="${areaData}" />`;
-    svg += `<path class="line-path" d="${pathData}" />`;
+    // Draw stacked areas
+    stackedPaths.forEach(({ path, color, state }) => {
+        svg += `<path class="stacked-area" d="${path}" fill="url(#gradient-${state})" opacity="0.9" />`;
+    });
     
     // Add x-axis labels (based on full range)
     const firstYear = populationData[0].date.getFullYear();
