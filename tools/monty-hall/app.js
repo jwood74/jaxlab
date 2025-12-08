@@ -199,8 +199,10 @@ function revealDoor() {
     }
     
     // Reveal all but one of the available doors (for 3 doors, reveal 1; for more doors, reveal n-2)
-    const doorsToReveal = gameState.numDoors - 2;
+    // This ensures there's always one other unopened door to switch to
+    const doorsToReveal = Math.min(gameState.numDoors - 2, availableDoors.length);
     for (let i = 0; i < doorsToReveal; i++) {
+        if (availableDoors.length === 0) break; // Safety check
         const randomIndex = Math.floor(Math.random() * availableDoors.length);
         const doorToReveal = availableDoors.splice(randomIndex, 1)[0];
         gameState.revealedDoors.push(doorToReveal);
