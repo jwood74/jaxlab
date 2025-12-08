@@ -119,6 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('show-probabilities').addEventListener('change', toggleProbabilities);
     document.getElementById('stay-button').addEventListener('click', () => makeDecision('stay'));
     document.getElementById('switch-button').addEventListener('click', () => makeDecision('switch'));
+    document.getElementById('reset-stats').addEventListener('click', resetStatistics);
+    document.getElementById('simulate-stay').addEventListener('click', () => simulateGames('stay', 50));
+    document.getElementById('simulate-switch').addEventListener('click', () => simulateGames('switch', 50));
     doorCountInput.addEventListener('change', function() {
         const newCount = parseInt(this.value);
         if (newCount >= 3 && newCount <= 10) {
@@ -423,4 +426,103 @@ function loadStatistics() {
     gameState.switchWins = parseInt(localStorage.getItem('montyHall_switchWins') || '0');
     gameState.totalGames = parseInt(localStorage.getItem('montyHall_totalGames') || '0');
     updateStatistics();
+}
+
+/**
+ * Reset statistics
+ */
+function resetStatistics() {
+    if (confirm('Are you sure you want to reset all cumulative results?')) {
+        gameState.stayWins = 0;
+        gameState.switchWins = 0;
+        gameState.totalGames = 0;
+        saveStatistics();
+        updateStatistics();
+    }
+}
+
+/**
+ * Simulate multiple games automatically
+ */
+async function simulateGames(strategy, count) {
+    // Disable simulation buttons during simulation
+    const resetBtn = document.getElementById('reset-stats');
+    const stayBtn = document.getElementById('simulate-stay');
+    const switchBtn = document.getElementById('simulate-switch');
+    
+    resetBtn.disabled = true;
+    stayBtn.disabled = true;
+    switchBtn.disabled = true;
+    
+    // Store original phase
+    const originalPhase = gameState.phase;
+    
+    for (let i = 0; i < count; i++) {
+        // Reset game state for simulation
+        gameState.carDoor = Math.floor(Math.random() * gameState.numDoors);
+        gameState.selectedDoor = Math.floor(Math.random() * gameState.numDoors);
+        gameState.revealedDoors = [];
+        
+        // Determine which doors to reveal (all but car and selected, leaving one other)
+        const availableDoors = [];
+        for (let j = 0; j < gameState.numDoors; j++) {
+            if (j !== gameState.carDoor && j !== gameState.selectedDoor) {
+                availableDoors.push(j);
+            }
+        }
+        
+        // Reveal all but one of the available doors
+        const doorsToReveal = Math.min(gameState.numDoors - 2, availableDoors.length);
+        for (let j = 0; j < doorsToReveal; j++) {
+            if (availableDoors.length === 0) break;
+            const randomIndex = Math.floor(Math.random() * availableDoors.length);
+            gameState.revealedDoors.push(availableDoors.splice(randomIndex, 1)[0]);
+        }
+        
+        // Make decision based on strategy
+        let finalDoor = gameState.selectedDoor;
+        
+        if (strategy === 'switch') {
+            // Find the other unopened door
+            for (let j = 0; j < gameState.numDoors; j++) {
+                if (j !== gameState.selectedDoor && !gameState.revealedDoors.includes(j)) {
+                    finalDoor = j;
+                    break;
+                }
+            }
+        }
+        
+        // Check if won
+        const won = finalDoor === gameState.carDoor;
+        
+        // Update statistics
+        gameState.totalGames++;
+        if (strategy === 'stay') {
+            if (won) gameState.stayWins++;
+        } else {
+            if (won) gameState.switchWins++;
+        }
+        
+        // Update display every 10 games for performance
+        if (i % 10 === 0 || i === count - 1) {
+            updateStatistics();
+            // Small delay to allow UI to update
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+    }
+    
+    // Save final statistics
+    saveStatistics();
+    updateStatistics();
+    
+    // Restore game phase
+    gameState.phase = originalPhase;
+    
+    // Re-enable buttons
+    resetBtn.disabled = false;
+    stayBtn.disabled = false;
+    switchBtn.disabled = false;
+    
+    // Reset the current game
+    resetGame();
 }
