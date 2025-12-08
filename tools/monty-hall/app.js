@@ -22,6 +22,75 @@ let statusMessage;
 let actionButtons;
 let doorCountInput;
 
+// Sound effects
+const sounds = {
+    win: null,
+    lose: null
+};
+
+/**
+ * Create sound effects using Web Audio API
+ */
+function createSoundEffects() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContext();
+    
+    // Create ka-ching sound (win)
+    sounds.win = function() {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+        
+        // Second ching
+        setTimeout(() => {
+            const osc2 = audioContext.createOscillator();
+            const gain2 = audioContext.createGain();
+            
+            osc2.connect(gain2);
+            gain2.connect(audioContext.destination);
+            
+            osc2.frequency.setValueAtTime(900, audioContext.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(1400, audioContext.currentTime + 0.1);
+            
+            gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            osc2.start(audioContext.currentTime);
+            osc2.stop(audioContext.currentTime + 0.3);
+        }, 100);
+    };
+    
+    // Create goat bleat sound (lose)
+    sounds.lose = function() {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+        oscillator.frequency.linearRampToValueAtTime(150, audioContext.currentTime + 0.2);
+        oscillator.frequency.linearRampToValueAtTime(180, audioContext.currentTime + 0.4);
+        
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.4);
+    };
+}
+
 /**
  * Initialize the application
  */
@@ -31,6 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
     statusMessage = document.getElementById('status-message');
     actionButtons = document.getElementById('action-buttons');
     doorCountInput = document.getElementById('door-count');
+    
+    // Create sound effects
+    createSoundEffects();
     
     // Event listeners
     document.getElementById('reset-doors').addEventListener('click', resetGame);
@@ -178,13 +250,47 @@ function selectDoor(doorIndex) {
     gameState.selectedDoor = doorIndex;
     gameState.phase = 'SWITCH_OR_STAY';
     
-    // Reveal one door (that is not the car and not selected)
-    revealDoor();
+    // Reveal door(s) - with animation if more than 3 doors
+    if (gameState.numDoors > 3) {
+        revealDoorsSequentially();
+    } else {
+        revealDoor();
+        statusMessage.textContent = 'A door has been opened! Do you want to stay or switch?';
+        actionButtons.style.display = 'flex';
+        renderDoors();
+    }
+}
+
+/**
+ * Reveal doors sequentially with animation (for more than 3 doors)
+ */
+async function revealDoorsSequentially() {
+    const availableDoors = [];
+    for (let i = 0; i < gameState.numDoors; i++) {
+        if (i !== gameState.carDoor && i !== gameState.selectedDoor) {
+            availableDoors.push(i);
+        }
+    }
     
-    // Update UI
-    statusMessage.textContent = 'A door has been opened! Do you want to stay or switch?';
+    const doorsToReveal = Math.min(gameState.numDoors - 2, availableDoors.length);
+    
+    // Reveal doors one by one with animation
+    for (let i = 0; i < doorsToReveal; i++) {
+        if (availableDoors.length === 0) break;
+        const randomIndex = Math.floor(Math.random() * availableDoors.length);
+        const doorToReveal = availableDoors.splice(randomIndex, 1)[0];
+        gameState.revealedDoors.push(doorToReveal);
+        
+        // Render doors to show the reveal
+        renderDoors();
+        
+        // Wait before revealing next door
+        await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    // Show action buttons after all doors are revealed
+    statusMessage.textContent = 'Doors have been opened! Do you want to stay or switch?';
     actionButtons.style.display = 'flex';
-    renderDoors();
 }
 
 /**
@@ -250,8 +356,12 @@ function makeDecision(decision) {
     actionButtons.style.display = 'none';
     if (won) {
         statusMessage.textContent = `🎉 You won! You ${decision === 'stay' ? 'stayed' : 'switched'} and found the car!`;
+        // Play win sound
+        if (sounds.win) sounds.win();
     } else {
         statusMessage.textContent = `😔 You lost! You ${decision === 'stay' ? 'stayed' : 'switched'} and got a goat.`;
+        // Play lose sound
+        if (sounds.lose) sounds.lose();
     }
     
     renderDoors();
