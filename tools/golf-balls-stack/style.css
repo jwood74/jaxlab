@@ -8,11 +8,12 @@
     margin: 0;
 }
 
-/* Game Container - Full Screen */
+/* Game Container - Smaller height to show header and footer */
 .game-container {
     position: relative;
     width: 100vw;
-    height: calc(100vh - 80px); /* Account for header */
+    height: 60vh; /* Reduced height */
+    min-height: 400px;
     overflow: hidden;
     background: linear-gradient(180deg, #e8f4f8 0%, #f0f9ff 50%, #e0f2fe 100%);
 }
@@ -124,63 +125,26 @@
     background: rgba(255, 255, 255, 0.95);
 }
 
-/* Toggle Label */
-.toggle-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 0.75rem 1.25rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.toggle-label:hover {
-    border-color: #cbd5e1;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.toggle-label input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: #10b981;
-}
-
-.toggle-text {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1e293b;
-    user-select: none;
-}
-
-/* Instructions */
-.instructions {
-    margin-top: auto;
+/* Instructions Below Canvas */
+.instructions-bottom {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     padding: 1rem 1.5rem;
+    margin: 1.5rem auto;
+    max-width: 1200px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    pointer-events: none;
-}
-
-.instructions p {
-    margin: 0.5rem 0;
+    text-align: center;
     font-size: 0.9rem;
     color: #475569;
 }
 
-.instructions strong {
+.instructions-bottom strong {
     color: #1e293b;
     font-weight: 600;
 }
 
-.instructions kbd {
+.instructions-bottom kbd {
     background: #f1f5f9;
     border: 1px solid #cbd5e1;
     border-radius: 4px;
@@ -193,7 +157,8 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .game-container {
-        height: calc(100vh - 70px);
+        height: 50vh;
+        min-height: 350px;
     }
     
     .ui-overlay {
@@ -221,19 +186,15 @@
         gap: 0.5rem;
     }
     
-    .control-btn,
-    .toggle-label {
+    .control-btn {
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
     }
     
-    .instructions {
+    .instructions-bottom {
         padding: 0.75rem 1rem;
-    }
-    
-    .instructions p {
         font-size: 0.8rem;
-        margin: 0.375rem 0;
+        margin: 1rem auto;
     }
 }
 
@@ -254,13 +215,12 @@
         align-items: stretch;
     }
     
-    .control-btn,
-    .toggle-label {
+    .control-btn {
         width: 100%;
         justify-content: center;
     }
     
-    .instructions p:not(:first-child) {
-        display: none;
+    .instructions-bottom {
+        font-size: 0.75rem;
     }
 }
