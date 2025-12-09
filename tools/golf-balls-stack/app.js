@@ -8,28 +8,24 @@
 // ============================================================================
 
 const CONFIG = {
-    // Golf ball properties
+    // Golf ball properties - easier stacking with more friction, less bounce
     BALL_RADIUS: 21.35, // Standard golf ball radius in pixels (42.7mm diameter)
     BALL_MASS: 0.0459, // Golf ball mass in kg
-    BALL_RESTITUTION: 0.65, // Bounce coefficient (normal mode)
-    BALL_FRICTION: 0.3, // Surface friction (normal mode)
+    BALL_RESTITUTION: 0.45, // Reduced bounce for easier stacking
+    BALL_FRICTION: 0.6, // Increased friction for easier stacking
+    BALL_FRICTION_STATIC: 0.8, // Higher static friction
     BALL_FRICTION_AIR: 0.01, // Air resistance
-    
-    // Record mode properties (more realistic, harder to stack)
-    RECORD_RESTITUTION: 0.55, // Less bounce in record mode
-    RECORD_FRICTION: 0.5, // More friction in record mode
-    RECORD_FRICTION_STATIC: 0.6, // Higher static friction
     
     // World properties
     GRAVITY: 1.0,
     WALL_THICKNESS: 60,
-    GROUND_FRICTION: 0.8,
-    GROUND_RESTITUTION: 0.4,
+    GROUND_FRICTION: 0.9,
+    GROUND_RESTITUTION: 0.3,
     
-    // Stacking detection
-    STACK_VELOCITY_THRESHOLD: 0.5, // Max velocity for "stable"
+    // Stacking detection - more lenient
+    STACK_VELOCITY_THRESHOLD: 1.0, // Increased threshold for "stable"
     STACK_CHECK_INTERVAL: 500, // Check every 500ms
-    VERTICAL_TOLERANCE: 50, // Horizontal distance to be "stacked"
+    VERTICAL_TOLERANCE: 60, // Increased horizontal distance tolerance
     
     // Spawn position
     SPAWN_OFFSET_X: 0.3, // 30% from left
@@ -49,7 +45,6 @@ let engine, render, world, canvas, ctx;
 let balls = [];
 let currentHeight = 0;
 let totalBalls = 0;
-let recordMode = false;
 let isDragging = false;
 let draggedBall = null;
 let mouseConstraint = null;
@@ -242,10 +237,10 @@ const GolfBall = {
      */
     create(x, y) {
         const ball = Matter.Bodies.circle(x, y, CONFIG.BALL_RADIUS, {
-            restitution: recordMode ? CONFIG.RECORD_RESTITUTION : CONFIG.BALL_RESTITUTION,
-            friction: recordMode ? CONFIG.RECORD_FRICTION : CONFIG.BALL_FRICTION,
+            restitution: CONFIG.BALL_RESTITUTION,
+            friction: CONFIG.BALL_FRICTION,
             frictionAir: CONFIG.BALL_FRICTION_AIR,
-            frictionStatic: recordMode ? CONFIG.RECORD_FRICTION_STATIC : CONFIG.BALL_FRICTION,
+            frictionStatic: CONFIG.BALL_FRICTION_STATIC,
             density: CONFIG.BALL_MASS / (Math.PI * CONFIG.BALL_RADIUS * CONFIG.BALL_RADIUS),
             render: { fillStyle: '#ffffff' }
         });
@@ -406,7 +401,7 @@ const TowerCounter = {
             
             // Should be roughly one ball diameter apart vertically
             const expectedDist = CONFIG.BALL_RADIUS * 2;
-            const distTolerance = CONFIG.BALL_RADIUS * 0.5;
+            const distTolerance = CONFIG.BALL_RADIUS * 0.8; // More lenient tolerance
             
             if (horizontalDist < CONFIG.VERTICAL_TOLERANCE &&
                 verticalDist > expectedDist - distTolerance &&
@@ -440,17 +435,12 @@ const StackingUI = {
             currentHeight: document.getElementById('current-height'),
             totalBalls: document.getElementById('total-balls'),
             spawnButton: document.getElementById('spawn-ball'),
-            resetButton: document.getElementById('reset-game'),
-            recordModeToggle: document.getElementById('record-mode')
+            resetButton: document.getElementById('reset-game')
         };
         
         // Set up event listeners
         this.elements.spawnButton.addEventListener('click', () => this.spawnBall());
         this.elements.resetButton.addEventListener('click', () => this.resetGame());
-        this.elements.recordModeToggle.addEventListener('change', (e) => {
-            recordMode = e.target.checked;
-            SoundEffects.toggle();
-        });
         
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
