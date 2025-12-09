@@ -60,6 +60,8 @@ let mouseConstraint = null;
 // ============================================================================
 
 const PhysicsEngine = {
+    resizeTimeout: null,
+    
     /**
      * Initialize the physics engine and renderer
      */
@@ -206,17 +208,26 @@ const PhysicsEngine = {
     },
     
     /**
-     * Handle window resize
+     * Handle window resize with debounce to avoid excessive recreations
      */
     handleResize() {
-        const container = document.getElementById('game-container');
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        
-        // Remove old boundaries and recreate
-        const bodiesToRemove = Matter.Composite.allBodies(world).filter(b => b.isStatic);
-        Matter.World.remove(world, bodiesToRemove);
-        this.createBoundaries();
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => {
+            const container = document.getElementById('game-container');
+            const newWidth = container.clientWidth;
+            const newHeight = container.clientHeight;
+            
+            // Only resize if dimensions actually changed
+            if (canvas.width !== newWidth || canvas.height !== newHeight) {
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                // Remove old boundaries and recreate
+                const bodiesToRemove = Matter.Composite.allBodies(world).filter(b => b.isStatic);
+                Matter.World.remove(world, bodiesToRemove);
+                this.createBoundaries();
+            }
+        }, 250);
     }
 };
 
@@ -449,8 +460,23 @@ const StackingUI = {
             }
         });
         
-        // Start stats update loop
-        setInterval(() => this.updateStats(), CONFIG.STACK_CHECK_INTERVAL);
+        // Update stats in the render loop instead of setInterval
+        this.startStatsUpdateLoop();
+    },
+    
+    /**
+     * Start stats update loop using requestAnimationFrame
+     */
+    startStatsUpdateLoop() {
+        let lastUpdate = 0;
+        const update = (timestamp) => {
+            if (timestamp - lastUpdate >= CONFIG.STACK_CHECK_INTERVAL) {
+                this.updateStats();
+                lastUpdate = timestamp;
+            }
+            requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
     },
     
     /**
