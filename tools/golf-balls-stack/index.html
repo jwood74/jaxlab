@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Golf Balls Stack - Stack golf balls using realistic physics simulation">
+    <meta name="apple-mobile-web-app-title" content="JaxLab - Golf Balls Stack">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    
+    <title>Golf Balls Stack - JaxLab</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Matter.js Physics Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🧪</div>
+                <span class="logo-text">Jax<span>Lab</span></span>
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="https://github.com/jwood74/jaxlab" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content golf-balls-stack">
+        <!-- Game Canvas Container -->
+        <div id="game-container" class="game-container">
+            <canvas id="game-canvas"></canvas>
+            
+            <!-- UI Overlay -->
+            <div class="ui-overlay">
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <div class="stat-label">Current Height</div>
+                        <div class="stat-value" id="current-height">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">World Record</div>
+                        <div class="stat-value record">9</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Total Balls</div>
+                        <div class="stat-value" id="total-balls">0</div>
+                    </div>
+                </div>
+                
+                <div class="controls-panel">
+                    <button id="spawn-ball" class="control-btn primary">
+                        ⛳ Spawn Ball
+                    </button>
+                    <button id="reset-game" class="control-btn secondary">
+                        🔄 Reset
+                    </button>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="record-mode">
+                        <span class="toggle-text">Record Mode</span>
+                    </label>
+                </div>
+                
+                <div class="instructions">
+                    <p>🎯 <strong>Goal:</strong> Stack golf balls vertically!</p>
+                    <p>🖱️ Drag balls to position them, or press <kbd>Space</kbd> to spawn</p>
+                    <p>🏆 World record: 9 balls stacked</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-copyright">
+                © 2025 JaxLab. Built with ❤️ and hosted at 
+                <a href="https://lab.jaxen.au"><span class="footer-domain">lab.jaxen.au</span></a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/main.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
