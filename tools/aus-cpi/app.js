@@ -217,17 +217,30 @@ function drawChart(startDate, endDate, startValue, endValue, mode) {
     const chartElement = document.getElementById('cpi-chart');
     chartElement.innerHTML = ''; // Clear existing chart
     
+    // Create tooltip element
+    let tooltip = document.getElementById('chart-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'chart-tooltip';
+        tooltip.className = 'chart-tooltip';
+        chartElement.parentElement.style.position = 'relative';
+        chartElement.parentElement.appendChild(tooltip);
+    }
+    
     // Generate data points for the chart
     const chartData = [];
     const startCPI = getCPIForDate(startDate);
+    const endCPI = getCPIForDate(endDate);
     
     cpiData.forEach(point => {
         if (point.date >= startDate && point.date <= endDate) {
             let value;
             if (mode === 'historical') {
+                // Historical to Present: show how startValue grows to endValue
                 value = startValue * (point.cpi / startCPI);
             } else {
-                value = endValue * (startCPI / point.cpi);
+                // Present to Historical: show how endValue shrinks to startValue going back in time
+                value = endValue * (point.cpi / endCPI);
             }
             chartData.push({ date: point.date, value });
         }
@@ -349,7 +362,7 @@ function drawChart(startDate, endDate, startValue, endValue, mode) {
     line.setAttribute('class', 'chart-line');
     g.appendChild(line);
     
-    // Draw dots
+    // Draw dots with tooltip functionality
     chartData.forEach(point => {
         const x = xScale(point.date);
         const y = yScale(point.value);
@@ -359,6 +372,29 @@ function drawChart(startDate, endDate, startValue, endValue, mode) {
         dot.setAttribute('cy', y);
         dot.setAttribute('r', 4);
         dot.setAttribute('class', 'chart-dot');
+        dot.style.cursor = 'pointer';
+        
+        // Add hover events for tooltip
+        dot.addEventListener('mouseenter', (e) => {
+            tooltip.innerHTML = `
+                <div class="chart-tooltip-date">${formatDateDisplay(point.date)}</div>
+                <div class="chart-tooltip-value">${formatCurrency(point.value)}</div>
+            `;
+            tooltip.classList.add('visible');
+            
+            // Position tooltip near the dot
+            const svgRect = svg.getBoundingClientRect();
+            const dotX = parseFloat(dot.getAttribute('cx')) + margin.left;
+            const dotY = parseFloat(dot.getAttribute('cy')) + margin.top;
+            
+            tooltip.style.left = `${dotX + 10}px`;
+            tooltip.style.top = `${dotY - 10}px`;
+        });
+        
+        dot.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('visible');
+        });
+        
         g.appendChild(dot);
     });
     
