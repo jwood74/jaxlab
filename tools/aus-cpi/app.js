@@ -223,8 +223,12 @@ function drawChart(startDate, endDate, startValue, endValue, mode) {
         tooltip = document.createElement('div');
         tooltip.id = 'chart-tooltip';
         tooltip.className = 'chart-tooltip';
-        chartElement.parentElement.style.position = 'relative';
-        chartElement.parentElement.appendChild(tooltip);
+        const parent = chartElement.parentElement;
+        // Ensure parent has relative positioning for tooltip
+        if (!parent.style.position || parent.style.position === 'static') {
+            parent.style.position = 'relative';
+        }
+        parent.appendChild(tooltip);
     }
     
     // Generate data points for the chart
@@ -382,13 +386,18 @@ function drawChart(startDate, endDate, startValue, endValue, mode) {
             `;
             tooltip.classList.add('visible');
             
-            // Position tooltip near the dot
-            const svgRect = svg.getBoundingClientRect();
+            // Position tooltip near the dot relative to the chart element
+            const chartRect = chartElement.getBoundingClientRect();
+            const parentRect = chartElement.parentElement.getBoundingClientRect();
             const dotX = parseFloat(dot.getAttribute('cx')) + margin.left;
             const dotY = parseFloat(dot.getAttribute('cy')) + margin.top;
             
-            tooltip.style.left = `${dotX + 10}px`;
-            tooltip.style.top = `${dotY - 10}px`;
+            // Calculate position relative to parent container
+            const offsetX = chartRect.left - parentRect.left;
+            const offsetY = chartRect.top - parentRect.top;
+            
+            tooltip.style.left = `${offsetX + dotX + 10}px`;
+            tooltip.style.top = `${offsetY + dotY - 10}px`;
         });
         
         dot.addEventListener('mouseleave', () => {
