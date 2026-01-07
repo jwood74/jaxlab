@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Australian CPI Calculator - Calculate inflation and purchasing power changes over time">
+    <meta name="apple-mobile-web-app-title" content="JaxLab - Aus CPI">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    
+    <title>Australian CPI Calculator - JaxLab</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🧪</div>
+                <span class="logo-text">Jax<span>Lab</span></span>
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="https://github.com/jwood74/jaxlab" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content cpi-calculator">
+        <div class="container">
+            <!-- Title Section -->
+            <div class="title-section">
+                <h1>Australian CPI Calculator</h1>
+                <p class="subtitle">Calculate purchasing power and inflation changes over time</p>
+                <p class="data-source">
+                    Sourced from <a href="https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release" target="_blank" rel="noopener noreferrer">ABS</a> - Quarterly data (1948-2025)
+                </p>
+            </div>
+
+            <!-- Mode Toggle -->
+            <div class="mode-toggle-container">
+                <button class="mode-btn active" data-mode="historical">
+                    <span class="mode-icon">📅</span>
+                    <span class="mode-label">Historical to Present</span>
+                    <span class="mode-desc">What was worth then?</span>
+                </button>
+                <button class="mode-btn" data-mode="present">
+                    <span class="mode-icon">💰</span>
+                    <span class="mode-label">Present to Historical</span>
+                    <span class="mode-desc">What is worth now?</span>
+                </button>
+            </div>
+
+            <!-- Calculator -->
+            <div class="calculator-container">
+                <!-- Historical to Present Mode -->
+                <div class="calculator-mode active" id="historical-mode">
+                    <div class="input-section">
+                        <div class="input-group">
+                            <label for="historical-amount">Amount in the past</label>
+                            <div class="currency-input">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="historical-amount" placeholder="100" min="0" step="0.01" value="100">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="historical-date">Select date</label>
+                            <input type="date" id="historical-date" class="date-input">
+                        </div>
+                    </div>
+
+                    <div class="result-section">
+                        <div class="result-card">
+                            <div class="result-label">Equivalent value today</div>
+                            <div class="result-value" id="historical-result">$0.00</div>
+                            <div class="result-details" id="historical-details"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Present to Historical Mode -->
+                <div class="calculator-mode" id="present-mode">
+                    <div class="input-section">
+                        <div class="input-group">
+                            <label for="present-amount">Amount today</label>
+                            <div class="currency-input">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="present-amount" placeholder="100" min="0" step="0.01" value="100">
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="present-date">Select date</label>
+                            <input type="date" id="present-date" class="date-input">
+                        </div>
+                    </div>
+
+                    <div class="result-section">
+                        <div class="result-card">
+                            <div class="result-label">Equivalent value in the past</div>
+                            <div class="result-value" id="present-result">$0.00</div>
+                            <div class="result-details" id="present-details"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graph -->
+            <div class="chart-container">
+                <h2>Purchasing Power Over Time</h2>
+                <div id="cpi-chart" class="chart">
+                    <div class="chart-placeholder">Enter values above to see the graph</div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="info-section">
+                <h3>About CPI</h3>
+                <p>The Consumer Price Index (CPI) measures changes in the price level of a basket of consumer goods and services. This calculator uses official Australian Bureau of Statistics (ABS) quarterly CPI data to calculate how the purchasing power of money has changed over time.</p>
+                <p><strong>Note:</strong> Monthly CPI data will be available starting January 28, 2026.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-copyright">
+                © 2025 JaxLab. Built with ❤️ and hosted at 
+                <a href="https://lab.jaxen.au"><span class="footer-domain">lab.jaxen.au</span></a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/main.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
