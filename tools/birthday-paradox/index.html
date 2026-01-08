@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Birthday Paradox Visualiser - Explore how quickly birthday collisions occur as group size increases">
+    <meta name="apple-mobile-web-app-title" content="JaxLab - Birthday Paradox">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    
+    <title>Birthday Paradox Visualiser - JaxLab</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🧪</div>
+                <span class="logo-text">Jax<span>Lab</span></span>
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="https://github.com/jwood74/jaxlab" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content birthday-paradox">
+        <div class="container">
+            <!-- Title Section -->
+            <div class="title-section">
+                <h1>🎂 Birthday Paradox Visualiser</h1>
+                <p class="subtitle">Watch birthday collisions happen faster than you'd expect</p>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <button id="add-one" class="control-btn primary">Add 1 Person</button>
+                    <button id="add-five" class="control-btn">Add 5 People</button>
+                    <button id="add-ten" class="control-btn">Add 10 People</button>
+                    <button id="add-twenty" class="control-btn">Add 20 People</button>
+                </div>
+                <div class="control-group">
+                    <button id="reset" class="control-btn reset">Reset Room</button>
+                </div>
+            </div>
+
+            <!-- Statistics Dashboard -->
+            <div class="stats-dashboard">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-label">People in Room</div>
+                        <div class="stat-value" id="people-count">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Birthday Match</div>
+                        <div class="stat-value" id="collision-status">None</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Theoretical Probability</div>
+                        <div class="stat-value" id="theoretical-probability">0%</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✨</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Observed Result</div>
+                        <div class="stat-value" id="observed-result">No collision</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Explanation -->
+            <div class="explanation-box" id="explanation-box">
+                <button class="explanation-toggle" id="explanation-toggle" aria-label="Toggle explanation">
+                    <span class="toggle-icon">ℹ️</span>
+                    <span class="toggle-text">Show Explanation</span>
+                </button>
+                <div class="explanation-content" id="explanation-content">
+                    <p id="dynamic-explanation">
+                        Start adding people to the room! The Birthday Paradox shows that birthday collisions happen surprisingly quickly.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Room Container -->
+            <div class="room-container">
+                <div id="room" class="room">
+                    <!-- People will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Simulation Mode -->
+            <div class="simulation-section">
+                <h2>Simulation Mode</h2>
+                <p class="simulation-description">
+                    Run thousands of trials to see how the observed probability converges to the theoretical value.
+                </p>
+                <div class="simulation-controls">
+                    <div class="simulation-settings">
+                        <label for="sim-people">Group Size:</label>
+                        <input type="number" id="sim-people" min="2" max="100" value="23">
+                        <label for="sim-trials">Trials:</label>
+                        <select id="sim-trials">
+                            <option value="100">100</option>
+                            <option value="1000" selected>1,000</option>
+                            <option value="10000">10,000</option>
+                        </select>
+                        <button id="run-simulation" class="control-btn primary">Run Simulation</button>
+                    </div>
+                </div>
+                <div class="simulation-results" id="simulation-results" style="display: none;">
+                    <div class="result-summary">
+                        <div class="result-item">
+                            <span class="result-label">Collisions Found:</span>
+                            <span class="result-value" id="sim-collisions">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Observed Probability:</span>
+                            <span class="result-value" id="sim-observed">0%</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Theoretical Probability:</span>
+                            <span class="result-value" id="sim-theoretical">0%</span>
+                        </div>
+                    </div>
+                    <div class="progress-visualization">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        <div class="convergence-info" id="convergence-info"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="about-section">
+                <h2>About the Birthday Paradox</h2>
+                <p>
+                    The Birthday Paradox is a fascinating probability phenomenon that demonstrates how our intuition 
+                    about randomness can be misleading. It shows that in a group of just 23 people, there's approximately 
+                    a 50% chance that two people share the same birthday!
+                </p>
+                <p>
+                    This seems counterintuitive because we often think about the probability of someone sharing 
+                    <em>our specific</em> birthday. But the paradox is about <em>any two people</em> in the group 
+                    sharing a birthday, which creates many more possible pairs to compare.
+                </p>
+                <p>
+                    With 23 people, there are 253 possible pairs of people. Each pair has a 1/365 chance of sharing 
+                    a birthday, and when you combine all these possibilities, the probability of at least one match 
+                    becomes surprisingly high!
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-copyright">
+                © 2025 JaxLab. Built with ❤️ and hosted at 
+                <a href="https://lab.jaxen.au"><span class="footer-domain">lab.jaxen.au</span></a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../../js/main.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
