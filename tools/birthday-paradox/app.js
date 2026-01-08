@@ -7,8 +7,7 @@
 const state = {
     people: [], // Array of person objects: {id, birthday, element}
     nextId: 1,
-    collisionGroups: [], // Array of arrays, each containing person IDs with same birthday
-    explanationVisible: false
+    collisionGroups: [] // Array of arrays, each containing person IDs with same birthday
 };
 
 // DOM elements
@@ -16,10 +15,6 @@ let roomElement;
 let peopleCountElement;
 let collisionStatusElement;
 let theoreticalProbabilityElement;
-let observedResultElement;
-let dynamicExplanationElement;
-let explanationToggle;
-let explanationContent;
 
 /**
  * Initialize the application when DOM is ready
@@ -38,10 +33,6 @@ function initializeDOMElements() {
     peopleCountElement = document.getElementById('people-count');
     collisionStatusElement = document.getElementById('collision-status');
     theoreticalProbabilityElement = document.getElementById('theoretical-probability');
-    observedResultElement = document.getElementById('observed-result');
-    dynamicExplanationElement = document.getElementById('dynamic-explanation');
-    explanationToggle = document.getElementById('explanation-toggle');
-    explanationContent = document.getElementById('explanation-content');
 }
 
 /**
@@ -54,19 +45,6 @@ function setupEventListeners() {
     document.getElementById('add-twenty').addEventListener('click', () => addPeople(20));
     document.getElementById('reset').addEventListener('click', resetRoom);
     document.getElementById('run-simulation').addEventListener('click', runSimulation);
-    
-    explanationToggle.addEventListener('click', toggleExplanation);
-}
-
-/**
- * Toggle the explanation section visibility
- */
-function toggleExplanation() {
-    state.explanationVisible = !state.explanationVisible;
-    explanationContent.classList.toggle('active', state.explanationVisible);
-    
-    const toggleText = explanationToggle.querySelector('.toggle-text');
-    toggleText.textContent = state.explanationVisible ? 'Hide Explanation' : 'Show Explanation';
 }
 
 /**
@@ -224,41 +202,6 @@ function updateDisplay() {
     collisionStatusElement.style.color = hasCollision ? '#10b981' : 'var(--text-primary)';
     
     theoreticalProbabilityElement.textContent = `${(probability * 100).toFixed(1)}%`;
-    observedResultElement.textContent = hasCollision ? 'Collision found!' : 'No collision';
-    observedResultElement.style.color = hasCollision ? '#10b981' : 'var(--text-secondary)';
-    
-    // Update dynamic explanation
-    updateExplanation(peopleCount, probability, hasCollision);
-}
-
-/**
- * Update the educational explanation text based on current state
- * @param {number} peopleCount - Current number of people
- * @param {number} probability - Theoretical probability
- * @param {boolean} hasCollision - Whether a collision exists
- */
-function updateExplanation(peopleCount, probability, hasCollision) {
-    let explanation = '';
-    
-    if (peopleCount === 0) {
-        explanation = 'Start adding people to the room! The Birthday Paradox shows that birthday collisions happen surprisingly quickly.';
-    } else if (peopleCount === 1) {
-        explanation = 'With just 1 person, there are no possible collisions. Add more people to see the magic happen!';
-    } else if (peopleCount < 10) {
-        explanation = `With ${peopleCount} people, there's only a ${(probability * 100).toFixed(1)}% chance of a shared birthday. Keep adding more!`;
-    } else if (peopleCount < 23) {
-        explanation = `With ${peopleCount} people, the probability is ${(probability * 100).toFixed(1)}%. We're getting closer to the famous 50% threshold at 23 people!`;
-    } else if (peopleCount === 23) {
-        explanation = `🎯 With exactly 23 people, there's about a 50% chance of a birthday match! ${hasCollision ? "And we found one!" : "Try resetting and running again to see it happen."}`;
-    } else if (peopleCount < 50) {
-        explanation = `With ${peopleCount} people, there's a ${(probability * 100).toFixed(1)}% chance of a collision. ${hasCollision ? "The theoretical probability is matching reality!" : "We beat the odds this time!"}`;
-    } else if (peopleCount < 70) {
-        explanation = `At ${peopleCount} people, the probability is ${(probability * 100).toFixed(1)}%. Birthday collisions are almost certain at this group size!`;
-    } else {
-        explanation = `With ${peopleCount} people, it's virtually guaranteed (${(probability * 100).toFixed(1)}% chance) that at least two people share a birthday!`;
-    }
-    
-    dynamicExplanationElement.textContent = explanation;
 }
 
 /**
@@ -297,9 +240,16 @@ async function runSimulation() {
     // Show results section
     simResultsElement.style.display = 'block';
     
-    // Reset progress
+    // Reset progress and results for new simulation
     progressBarElement.style.width = '0%';
-    progressBarElement.textContent = '0%';
+    progressBarElement.textContent = '';
+    simCollisionsElement.textContent = '0';
+    simObservedElement.textContent = '0%';
+    simTheoreticalElement.textContent = `${(calculateProbability(groupSize) * 100).toFixed(2)}%`;
+    convergenceInfoElement.textContent = '';
+    
+    // Small delay to ensure reset is visible
+    await sleep(50);
     
     let collisionCount = 0;
     const batchSize = 100; // Process in batches for UI updates
