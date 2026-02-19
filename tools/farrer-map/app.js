@@ -5,114 +5,13 @@
 
 // Sydney CBD coordinates
 const SYDNEY_CBD = {
-    lng: 151.2093,
-    lat: -33.8688,
-    zoom: 13
+    lng: 143.6197900429576,
+    lat: -34.626968529388,
+    zoom: 8
 };
 
-// Example GeoJSON data for voting booths around Sydney
-const boothsGeoJSON = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Sydney Town Hall",
-                "address": "483 George St, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.2073, -33.8737]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Hyde Park Barracks",
-                "address": "Queens Square, Macquarie St, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.2115, -33.8688]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Circular Quay Station",
-                "address": "Alfred St, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.2109, -33.8616]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Royal Botanic Garden",
-                "address": "Mrs Macquaries Rd, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.2177, -33.8641]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Darling Harbour",
-                "address": "Darling Dr, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.1987, -33.8722]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Sydney Opera House",
-                "address": "Bennelong Point, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.2153, -33.8568]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "Central Station",
-                "address": "Eddy Ave, Sydney NSW 2000",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.2073, -33.8830]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "name": "University of Sydney",
-                "address": "Eastern Ave, Camperdown NSW 2006",
-                "type": "Voting Booth"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [151.1873, -33.8886]
-            }
-        }
-    ]
-};
-
+const BOOTHS_GEOJSON_PATH = 'booths.geojson';
+const FARRER_GEOJSON_PATH = 'farrer.geojson';
 // Map instance
 let map;
 
@@ -136,86 +35,108 @@ function initMap() {
 
     // Wait for map to load before adding markers
     map.on('load', () => {
+        addFarrerLayer();
         addBoothsLayer();
     });
 }
 
 /**
+ * Add Farrer boundary layer to the map
+ */
+async function addFarrerLayer() {
+    try {
+        const response = await fetch(FARRER_GEOJSON_PATH);
+        if (!response.ok) {
+            throw new Error(`Failed to load Farrer boundary: ${response.status} ${response.statusText}`);
+        }
+
+        const farrerGeoJSON = await response.json();
+
+        map.addSource('farrer-boundary', {
+            type: 'geojson',
+            data: farrerGeoJSON
+        });
+
+        map.addLayer({
+            id: 'farrer-fill',
+            type: 'fill',
+            source: 'farrer-boundary',
+            paint: {
+                'fill-color': '#22c55e',
+                'fill-opacity': 0.15
+            }
+        });
+
+        map.addLayer({
+            id: 'farrer-outline',
+            type: 'line',
+            source: 'farrer-boundary',
+            paint: {
+                'line-color': '#166534',
+                'line-width': 2,
+                'line-opacity': 0.8
+            }
+        });
+    } catch (error) {
+        console.error('Error loading Farrer boundary:', error);
+    }
+}
+
+/**
  * Add booths layer to the map
  */
-function addBoothsLayer() {
-    // Add the GeoJSON source
-    map.addSource('booths', {
-        type: 'geojson',
-        data: boothsGeoJSON
-    });
-
-    // Add a layer for the booth markers
-    map.addLayer({
-        id: 'booths-layer',
-        type: 'circle',
-        source: 'booths',
-        paint: {
-            'circle-radius': 8,
-            'circle-color': '#6366f1',
-            'circle-stroke-color': '#ffffff',
-            'circle-stroke-width': 2
-        }
-    });
-
-    // Add labels for the booths
-    map.addLayer({
-        id: 'booths-labels',
-        type: 'symbol',
-        source: 'booths',
-        layout: {
-            'text-field': ['get', 'name'],
-            'text-size': 12,
-            'text-offset': [0, 1.5],
-            'text-anchor': 'top'
-        },
-        paint: {
-            'text-color': '#ffffff',
-            'text-halo-color': '#0f172a',
-            'text-halo-width': 1.5
-        }
-    });
-
-    // Add click event for popups
-    map.on('click', 'booths-layer', (e) => {
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const properties = e.features[0].properties;
-
-        // Create popup content
-        const popupContent = `
-            <div class="popup-title">${properties.name}</div>
-            <div class="popup-details">
-                <p><strong>Type:</strong> ${properties.type}</p>
-                <p><strong>Address:</strong> ${properties.address}</p>
-            </div>
-        `;
-
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+async function addBoothsLayer() {
+    try {
+        const response = await fetch(BOOTHS_GEOJSON_PATH);
+        if (!response.ok) {
+            throw new Error(`Failed to load booths data: ${response.status} ${response.statusText}`);
         }
 
-        new maplibregl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(popupContent)
-            .addTo(map);
-    });
+        const boothsGeoJSON = await response.json();
 
-    // Change cursor on hover
-    map.on('mouseenter', 'booths-layer', () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
+        const bounds = new maplibregl.LngLatBounds();
+        boothsGeoJSON.features.forEach((feature) => {
+            bounds.extend(feature.geometry.coordinates);
+        });
 
-    map.on('mouseleave', 'booths-layer', () => {
-        map.getCanvas().style.cursor = '';
-    });
+        if (!bounds.isEmpty()) {
+            map.fitBounds(bounds, { padding: 120, maxZoom: 15 });
+        }
+
+        boothsGeoJSON.features.forEach((feature) => {
+            const { properties } = feature;
+            const markerEl = document.createElement('button');
+            markerEl.type = 'button';
+            markerEl.style.width = '12px';
+            markerEl.style.height = '12px';
+            markerEl.style.borderRadius = '50%';
+            markerEl.style.backgroundColor = '#6366f1';
+            markerEl.style.border = '2px solid #ffffff';
+            markerEl.style.boxShadow = '0 1px 4px rgba(0, 0, 0, 0.35)';
+            markerEl.style.padding = '0';
+            markerEl.style.display = 'block';
+            markerEl.style.boxSizing = 'border-box';
+            markerEl.style.appearance = 'none';
+            markerEl.style.cursor = 'pointer';
+
+            const popupContent = `
+                <div class="popup-title">${properties.PPName}</div>
+                <div class="popup-details">
+                    <p><strong>Where:</strong> ${properties.PremisesName}</p>
+                    <p><strong>Address:</strong> ${properties.Address1} ${properties.Locality}</p>
+                </div>
+            `;
+
+            new maplibregl.Marker({ element: markerEl })
+                .setLngLat(feature.geometry.coordinates)
+                .setPopup(new maplibregl.Popup({ offset: 20 }).setHTML(popupContent))
+                .addTo(map);
+        });
+
+        console.log(`Loaded ${boothsGeoJSON.features.length} booths`);
+    } catch (error) {
+        console.error('Error loading booths layer:', error);
+    }
 }
 
 /**
