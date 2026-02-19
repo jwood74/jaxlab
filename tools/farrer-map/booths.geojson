@@ -1,0 +1,101 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sydney Town Hall",
+                "address": "483 George St, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.2073, -33.8737]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Hyde Park Barracks",
+                "address": "Queens Square, Macquarie St, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.2115, -33.8688]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Circular Quay Station",
+                "address": "Alfred St, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.2109, -33.8616]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Royal Botanic Garden",
+                "address": "Mrs Macquaries Rd, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.2177, -33.8641]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Darling Harbour",
+                "address": "Darling Dr, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.1987, -33.8722]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Sydney Opera House",
+                "address": "Bennelong Point, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.2153, -33.8568]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Central Station",
+                "address": "Eddy Ave, Sydney NSW 2000",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.2073, -33.8830]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "University of Sydney",
+                "address": "Eastern Ave, Camperdown NSW 2006",
+                "type": "Voting Booth"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [151.1873, -33.8886]
+            }
+        }
+    ]
+}
