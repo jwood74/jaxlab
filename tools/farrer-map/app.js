@@ -115,7 +115,6 @@ const boothsGeoJSON = {
 
 // Map instance
 let map;
-let boothsVisible = true;
 
 /**
  * Initialize the map with MapLibre and OpenFreeMap
@@ -138,7 +137,6 @@ function initMap() {
     // Wait for map to load before adding markers
     map.on('load', () => {
         addBoothsLayer();
-        updateStats();
     });
 }
 
@@ -221,51 +219,9 @@ function addBoothsLayer() {
 }
 
 /**
- * Reset map view to Sydney CBD
- */
-function resetView() {
-    map.flyTo({
-        center: [SYDNEY_CBD.lng, SYDNEY_CBD.lat],
-        zoom: SYDNEY_CBD.zoom,
-        essential: true
-    });
-}
-
-/**
- * Toggle booths visibility
- */
-function toggleBooths() {
-    boothsVisible = !boothsVisible;
-    const visibility = boothsVisible ? 'visible' : 'none';
-    
-    map.setLayoutProperty('booths-layer', 'visibility', visibility);
-    map.setLayoutProperty('booths-labels', 'visibility', visibility);
-    
-    // Update button state
-    const toggleBtn = document.getElementById('toggle-booths');
-    if (boothsVisible) {
-        toggleBtn.classList.add('active');
-    } else {
-        toggleBtn.classList.remove('active');
-    }
-}
-
-/**
- * Update statistics display
- */
-function updateStats() {
-    const totalBooths = boothsGeoJSON.features.length;
-    document.getElementById('total-booths').textContent = totalBooths;
-}
-
-/**
  * Initialize the application
  */
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize map
     initMap();
-
-    // Set up event listeners
-    document.getElementById('reset-view').addEventListener('click', resetView);
-    document.getElementById('toggle-booths').addEventListener('click', toggleBooths);
 });

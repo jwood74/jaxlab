@@ -2,119 +2,25 @@
  * Farrer Map Styles
  */
 
-.farrer-map {
-    padding: 1.5rem 0 3rem;
-}
-
-.title-section {
-    text-align: center;
-    margin-bottom: 1.25rem;
-}
-
-.title-section h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.subtitle {
-    font-size: 1.125rem;
-    color: var(--text-secondary);
-    margin: 0;
-}
-
-/* Map Container */
-.map-container {
-    width: 100%;
-    height: 600px;
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* Map Controls */
-.map-controls {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.control-btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+/* Page title in header */
+.page-title {
+    font-size: 1.5rem;
     font-weight: 600;
     color: var(--text-primary);
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: all var(--transition-normal);
-}
-
-.control-btn:hover {
-    background: var(--surface-light);
-    border-color: var(--primary);
-    transform: translateY(-2px);
-}
-
-.control-btn:active {
-    transform: translateY(0);
-}
-
-.control-btn.active {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: white;
-}
-
-/* Info Panel */
-.info-panel {
-    background: var(--surface);
-    border-radius: var(--border-radius-lg);
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-}
-
-.info-panel h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-}
-
-.info-panel p {
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-    line-height: 1.6;
-}
-
-/* Stats */
-.stats {
+    margin: 0;
     display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+    align-items: center;
 }
 
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
-
-.stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary);
+/* Map Container - Full screen */
+.map-container {
+    position: fixed;
+    top: 60px; /* Height of header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
 }
 
 /* MapLibre Popup Customization */
@@ -151,30 +57,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .title-section h1 {
-        font-size: 2rem;
-    }
-    
-    .map-container {
-        height: 400px;
-    }
-    
-    .info-panel {
-        padding: 1rem;
+    .page-title {
+        font-size: 1.25rem;
     }
 }
 
 @media (max-width: 480px) {
-    .title-section h1 {
-        font-size: 1.75rem;
-    }
-    
-    .map-container {
-        height: 350px;
-    }
-    
-    .control-btn {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
+    .page-title {
+        font-size: 1.1rem;
     }
 }
