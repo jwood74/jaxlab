@@ -16,6 +16,24 @@ const FARRER_GEOJSON_PATH = 'farrer.geojson';
 let map;
 
 /**
+ * Keep map container aligned to the bottom of the sticky header
+ */
+function updateMapContainerOffset() {
+    const header = document.querySelector('.header');
+    const mapContainer = document.querySelector('.map-container');
+    if (!mapContainer) {
+        return;
+    }
+
+    const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+    document.documentElement.style.setProperty('--farrer-header-offset', `${headerHeight}px`);
+
+    if (map) {
+        map.resize();
+    }
+}
+
+/**
  * Initialize the map with MapLibre and OpenFreeMap
  */
 function initMap() {
@@ -132,8 +150,6 @@ async function addBoothsLayer() {
                 .setPopup(new maplibregl.Popup({ offset: 20 }).setHTML(popupContent))
                 .addTo(map);
         });
-
-        console.log(`Loaded ${boothsGeoJSON.features.length} booths`);
     } catch (error) {
         console.error('Error loading booths layer:', error);
     }
@@ -143,6 +159,7 @@ async function addBoothsLayer() {
  * Initialize the application
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize map
+    updateMapContainerOffset();
     initMap();
+    window.addEventListener('resize', updateMapContainerOffset);
 });
