@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Farrer Map - Interactive map of Sydney with booths">
+    <meta name="description" content="Farrer Map - Interactive map of Farrer electorate in Australia">
     <meta name="apple-mobile-web-app-title" content="JaxLab - Farrer Map">
     
     <!-- Favicon -->
@@ -47,6 +47,60 @@
 
     <!-- Map Container -->
     <div id="map" class="map-container"></div>
+
+    <!-- Election Control Panels -->
+    <div id="election-controls" class="election-controls">
+        <div id="sa1-control-2025" class="sa1-control">
+            <button id="sa1-toggle-2025" class="sa1-toggle-btn" type="button" aria-pressed="false">
+                <span class="sa1-toggle-icon">⬡</span> 2025 Results
+            </button>
+            <div id="sa1-options-2025" class="sa1-options" hidden>
+                <div class="sa1-metrics">
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2025" value="fp_alp" checked> ALP FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2025" value="fp_lnp"> LIB FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2025" value="tcp_lnp"> LIB TCP
+                    </label>
+                </div>
+                <div class="sa1-legend">
+                    <div class="sa1-legend-bar" data-legend="2025"></div>
+                    <div class="sa1-legend-labels">
+                        <span class="sa1-legend-min" data-legend="2025">0%</span>
+                        <span class="sa1-legend-max" data-legend="2025">25%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sa1-control-2022" class="sa1-control">
+            <button id="sa1-toggle-2022" class="sa1-toggle-btn" type="button" aria-pressed="false">
+                <span class="sa1-toggle-icon">⬡</span> 2022 Results
+            </button>
+            <div id="sa1-options-2022" class="sa1-options" hidden>
+                <div class="sa1-metrics">
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2022" value="fp_alp" checked> ALP FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2022" value="fp_lnp"> LIB FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2022" value="tcp_lnp"> LIB TCP
+                    </label>
+                </div>
+                <div class="sa1-legend">
+                    <div class="sa1-legend-bar" data-legend="2022"></div>
+                    <div class="sa1-legend-labels">
+                        <span class="sa1-legend-min" data-legend="2022">0%</span>
+                        <span class="sa1-legend-max" data-legend="2022">25%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="../../js/main.js"></script>
