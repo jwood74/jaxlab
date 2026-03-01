@@ -1,0 +1,176 @@
+:root {
+    --party-fill-alp: #e3142d;
+    --party-text-alp: #f87171;
+    --party-fill-lib: #003087;
+    --party-text-lib: #60a5fa;
+    --party-fill-grn: #10c44e;
+    --party-text-grn: #4ade80;
+    --party-fill-nat: #093e15;
+    --party-text-nat: #145d2f;
+}
+
+/* Page title in header */
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Map Container - Full screen */
+.map-container {
+    position: fixed;
+    top: 60px; /* Height of header */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
+}
+
+/* MapLibre Popup Customization */
+.maplibregl-popup-content {
+    background: var(--surface-color);
+    color: var(--text-primary);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.55);
+}
+
+.maplibregl-popup-close-button {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.maplibregl-popup-close-button:hover {
+    background: var(--surface-hover);
+    color: var(--primary-color);
+}
+
+.popup-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.popup-details {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+/* District hover overlay */
+.district-hover-overlay {
+    position: fixed;
+    top: calc(60px + 0.75rem);
+    left: 0.075rem;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.5);
+    z-index: 10;
+    min-width: 180px;
+    pointer-events: none;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.district-hover-prompt {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.district-hover-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.district-hover-detail {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+}
+
+.district-party-alp {
+    color: var(--party-text-alp);
+    font-weight: 600;
+}
+
+.district-party-lib {
+    color: var(--party-text-lib);
+    font-weight: 600;
+}
+
+.district-party-grn {
+    color: var(--party-text-grn);
+    font-weight: 600;
+}
+
+.district-party-nat {
+    color: var(--party-text-nat);
+    font-weight: 600;
+}
+
+/* Election controls panel — bottom-right overlay */
+.election-controls {
+    position: fixed;
+    bottom: calc(1.5rem + 20px);
+    right: 1rem;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.sa1-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    background: var(--surface-color);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.45);
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.sa1-toggle-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.sa1-toggle-btn.active {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.sa1-toggle-icon {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.1rem;
+    }
+}
