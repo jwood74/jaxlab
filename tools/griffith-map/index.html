@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Griffith Map - Interactive map of Griffith electorate in Australia">
+    <meta name="apple-mobile-web-app-title" content="JaxLab - Griffith Map">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
+    
+    <title>Griffith Map - JaxLab</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- MapLibre GL JS -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-icon">🧪</div>
+                <span class="logo-text">Jax<span>Lab</span></span>
+            </a>
+            
+            <h1 class="page-title">🗺️ Griffith Map</h1>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="https://github.com/jwood74/jaxlab" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Map Container -->
+    <div id="map" class="map-container"></div>
+
+    <!-- Election Control Panels -->
+    <div id="election-controls" class="election-controls">
+        <div id="sa1-control-2025" class="sa1-control">
+            <button id="sa1-toggle-2025" class="sa1-toggle-btn" type="button" aria-pressed="false">
+                <span class="sa1-toggle-icon">⬡</span> 2025 Results
+            </button>
+            <div id="sa1-options-2025" class="sa1-options" hidden>
+                <div class="sa1-metrics">
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2025" value="fp_alp" checked> ALP FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2025" value="fp_lnp"> LIB FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2025" value="tcp_alp"> ALP TCP
+                    </label>
+                </div>
+                <div class="sa1-legend">
+                    <div class="sa1-legend-bar" data-legend="2025"></div>
+                    <div class="sa1-legend-labels">
+                        <span class="sa1-legend-min" data-legend="2025">0%</span>
+                        <span class="sa1-legend-max" data-legend="2025">25%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sa1-control-2022" class="sa1-control">
+            <button id="sa1-toggle-2022" class="sa1-toggle-btn" type="button" aria-pressed="false">
+                <span class="sa1-toggle-icon">⬡</span> 2022 Results
+            </button>
+            <div id="sa1-options-2022" class="sa1-options" hidden>
+                <div class="sa1-metrics">
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2022" value="fp_alp" checked> ALP FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2022" value="fp_lnp"> LIB FP
+                    </label>
+                    <label class="sa1-metric-label">
+                        <input type="radio" name="sa1-metric-2022" value="tcp_alp"> ALP TCP
+                    </label>
+                </div>
+                <div class="sa1-legend">
+                    <div class="sa1-legend-bar" data-legend="2022"></div>
+                    <div class="sa1-legend-labels">
+                        <span class="sa1-legend-min" data-legend="2022">0%</span>
+                        <span class="sa1-legend-max" data-legend="2022">25%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/main.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
