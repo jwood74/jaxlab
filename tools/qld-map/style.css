@@ -94,8 +94,8 @@
 /* District hover overlay */
 .district-hover-overlay {
     position: fixed;
-    top: calc(var(--header-offset, 60px) + 1rem);
-    left: 0.075rem;
+    bottom: 1rem;
+    left: 0.5rem;
     background: var(--surface-color);
     color: var(--text-primary);
     padding: 0.625rem 0.875rem;
