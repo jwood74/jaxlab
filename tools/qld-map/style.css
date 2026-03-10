@@ -1,12 +1,14 @@
 :root {
     --party-fill-alp: #e3142d;
     --party-text-alp: #f87171;
-    --party-fill-lib: #003087;
-    --party-text-lib: #60a5fa;
+    --party-fill-lnp: #003087;
+    --party-text-lnp: #60a5fa;
     --party-fill-grn: #10c44e;
     --party-text-grn: #4ade80;
-    --party-fill-nat: #093e15;
-    --party-text-nat: #145d2f;
+    --party-fill-kap: #04411b;
+    --party-text-kap: #09c34d;
+    --party-fill-ind: #6b1e6f;
+    --party-text-ind: #871785;
 }
 
 /* Page title in header */
@@ -22,12 +24,43 @@
 /* Map Container - Full screen */
 .map-container {
     position: fixed;
-    top: var(--farrer-header-offset, 60px);
+    top: var(--header-offset, 60px);
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
-    height: calc(100vh - var(--farrer-header-offset, 60px));
+    height: calc(100vh - var(--header-offset, 60px));
+}
+
+.compare-map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Compare layer labels */
+.compare-label {
+    position: fixed;
+    top: calc(var(--header-offset, 60px) + 0.75rem);
+    z-index: 10;
+    background: var(--surface-color, #1e293b);
+    color: var(--text-primary, #f1f5f9);
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--border-radius, 0.5rem);
+    border: 1px solid var(--border-color, #334155);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.5);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+.compare-label-before {
+    right: calc(50% + 0.75rem);
+}
+
+.compare-label-after {
+    left: calc(50% + 0.75rem);
 }
 
 /* MapLibre Popup Customization */
@@ -51,22 +84,10 @@
     color: var(--primary-color);
 }
 
-.popup-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.popup-details {
-    font-size: 0.875rem;
-    color: var(--text-primary);
-}
-
 /* District hover overlay */
 .district-hover-overlay {
     position: fixed;
-    top: calc(var(--farrer-header-offset, 60px) + 1rem);
+    top: calc(var(--header-offset, 60px) + 1rem);
     left: 0.075rem;
     background: var(--surface-color);
     color: var(--text-primary);
@@ -102,8 +123,8 @@
     font-weight: 600;
 }
 
-.district-party-lib {
-    color: var(--party-text-lib);
+.district-party-lnp {
+    color: var(--party-text-lnp);
     font-weight: 600;
 }
 
@@ -112,54 +133,14 @@
     font-weight: 600;
 }
 
-.district-party-nat {
-    color: var(--party-text-nat);
+.district-party-kap {
+    color: var(--party-text-kap);
     font-weight: 600;
 }
 
-/* Election controls panel — bottom-right overlay */
-.election-controls {
-    position: fixed;
-    bottom: calc(1.5rem + 20px);
-    right: 1rem;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
-}
-
-.sa1-toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.85rem;
-    background: var(--surface-color);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    font-family: inherit;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.45);
-    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
-}
-
-.sa1-toggle-btn:hover {
-    background: var(--surface-hover);
-    color: var(--text-primary);
-}
-
-.sa1-toggle-btn.active {
-    background: var(--primary-color);
-    color: #ffffff;
-    border-color: var(--primary-color);
-}
-
-.sa1-toggle-icon {
-    font-size: 0.9rem;
-    line-height: 1;
+.district-party-ind {
+    color: var(--party-text-ind);
+    font-weight: 600;
 }
 
 /* Responsive Design */

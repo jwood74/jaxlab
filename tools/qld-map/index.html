@@ -20,7 +20,11 @@
     <!-- MapLibre GL JS -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-    
+
+    <!-- MapLibre GL Compare (Layer Swipe) -->
+    <link rel="stylesheet" href="https://unpkg.com/@maplibre/maplibre-gl-compare@0.5.0/dist/maplibre-gl-compare.css">
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-compare@0.5.0/dist/maplibre-gl-compare.js"></script>
+
     <!-- Styles -->
     <link rel="stylesheet" href="../../css/style.css">
     <link rel="stylesheet" href="style.css">
@@ -33,9 +37,9 @@
                 <div class="logo-icon">🧪</div>
                 <span class="logo-text">Jax<span>Lab</span></span>
             </a>
-            
+
             <h1 class="page-title">🗺️ Queensland Map</h1>
-            
+
             <nav>
                 <ul class="nav-links">
                     <li><a href="/">Home</a></li>
@@ -45,8 +49,15 @@
         </div>
     </header>
 
-    <!-- Map Container -->
-    <div id="map" class="map-container"></div>
+    <!-- Compare Map Container -->
+    <div id="comparison-container" class="map-container">
+        <div id="before" class="compare-map"></div>
+        <div id="after" class="compare-map"></div>
+    </div>
+
+    <!-- Layer labels -->
+    <div class="compare-label compare-label-before">2017 Boundaries</div>
+    <div class="compare-label compare-label-after">2026 Draft</div>
 
     <!-- District hover overlay -->
     <div id="district-hover-overlay" class="district-hover-overlay" aria-live="polite">
