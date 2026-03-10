@@ -27,7 +27,7 @@ function updateMapContainerOffset() {
 /**
  * Add electorate boundary layers to a map instance.
  */
-async function addBoundaryLayer(map, geojsonPath, sourceId) {
+async function addBoundaryLayer(map, geojsonPath, sourceId, { lineColor = '#374151', labelColor = '#000000' } = {}) {
     const response = await fetch(geojsonPath);
     if (!response.ok) throw new Error(`Failed to load ${geojsonPath}: ${response.status}`);
     const data = await response.json();
@@ -61,7 +61,7 @@ async function addBoundaryLayer(map, geojsonPath, sourceId) {
         type: 'line',
         source: sourceId,
         paint: {
-            'line-color': '#374151',
+            'line-color': lineColor,
             'line-width': 1.5,
             'line-opacity': 0.7
         }
@@ -79,7 +79,7 @@ async function addBoundaryLayer(map, geojsonPath, sourceId) {
             'text-max-width': 8
         },
         paint: {
-            'text-color': '#000000',
+            'text-color': labelColor,
             'text-halo-color': '#ffffff',
             'text-halo-width': 2,
             'text-halo-blur': 0.5
@@ -92,7 +92,7 @@ async function addBoundaryLayer(map, geojsonPath, sourceId) {
         type: 'line',
         source: sourceId,
         paint: {
-            'line-color': '#facc15',
+            'line-color': '#03742e',
             'line-width': 4,
             'line-blur': 3,
             'line-opacity': 0.95
@@ -167,13 +167,24 @@ document.addEventListener('DOMContentLoaded', () => {
     afterMap.addControl(new maplibregl.NavigationControl(), 'top-right');
     afterMap.addControl(new maplibregl.ScaleControl(), 'bottom-left');
 
+    // Read boundary colours from CSS custom properties
+    const cs = getComputedStyle(document.documentElement);
+    const oldColor = cs.getPropertyValue('--boundary-old').trim();
+    const newColor = cs.getPropertyValue('--boundary-new').trim();
+
     beforeMap.on('load', async () => {
-        await addBoundaryLayer(beforeMap, BEFORE_GEOJSON, 'boundary-2017');
+        await addBoundaryLayer(beforeMap, BEFORE_GEOJSON, 'boundary-2017', {
+            lineColor: oldColor,
+            labelColor: oldColor
+        });
         setupHover(beforeMap, 'boundary-2017');
     });
 
     afterMap.on('load', async () => {
-        await addBoundaryLayer(afterMap, AFTER_GEOJSON, 'boundary-2026');
+        await addBoundaryLayer(afterMap, AFTER_GEOJSON, 'boundary-2026', {
+            lineColor: newColor,
+            labelColor: newColor
+        });
         setupHover(afterMap, 'boundary-2026');
     });
 

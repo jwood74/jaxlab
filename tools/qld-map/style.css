@@ -9,6 +9,9 @@
     --party-text-kap: #09c34d;
     --party-fill-ind: #6b1e6f;
     --party-text-ind: #871785;
+
+    --boundary-old: #dc2626;
+    --boundary-new: #2563eb;
 }
 
 /* Page title in header */
@@ -57,10 +60,14 @@
 
 .compare-label-before {
     right: calc(50% + 0.75rem);
+    border-color: var(--boundary-old);
+    color: var(--boundary-old);
 }
 
 .compare-label-after {
     left: calc(50% + 0.75rem);
+    border-color: var(--boundary-new);
+    color: var(--boundary-new);
 }
 
 /* MapLibre Popup Customization */
