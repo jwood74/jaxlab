@@ -5,7 +5,7 @@ const MAP_CENTRE = {
 };
 
 const BEFORE_GEOJSON = 'qld_2017.geojson';
-const AFTER_GEOJSON = 'qld_2026_draft.geojson';
+const AFTER_GEOJSON = 'qld_2026.geojson';
 
 let beforeMap, afterMap;
 
